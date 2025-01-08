@@ -18,7 +18,7 @@ const App: React.FC = () => {
       <Offset />
         <Routes>
           <Route path="/cars" element={<CarList />} />
-          <Route path="/" element={<div>Welcome to the Coffee Shop Management App</div>} />
+          <Route path="/" element={<CarList />} />
         </Routes>
       </Router>
     </AppTheme>
