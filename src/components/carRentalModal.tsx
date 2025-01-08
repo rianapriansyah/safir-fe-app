@@ -44,7 +44,7 @@ return (
 				<Stack spacing={2}>
 				<Stack spacing={2} direction="row">
 						<TextField
-							autoFocus
+							disabled
 							required
 							margin="dense"
 							id="carName"
@@ -57,7 +57,7 @@ return (
 							onChange={(e: { target: { value: any; }; }) => setLocalCar({ ...localCar, name: e.target.value })}
 						/>
 						<TextField
-							autoFocus
+							disabled
 							required
 							margin="dense"
 							id="price"
