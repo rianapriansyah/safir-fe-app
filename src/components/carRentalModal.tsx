@@ -73,7 +73,7 @@ return (
         </DialogContent>
         <DialogActions>
 				<Button onClick={onCloseModal}>Batal</Button>
-				<Button onClick={()=>handleAction()}>Proses</Button>
+				<Button onClick={()=>handleAction()}>{`Mobil ${action.toString()}`}</Button>
         </DialogActions>
     </Dialog>
 	);
