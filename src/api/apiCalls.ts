@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
  
-const API_BASE_URL = 'http://localhost:3000/api';
-// const API_BASE_URL = 'https://srv664937.hstgr.cloud/api';
+// const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'https://safir-be-app-self.vercel.app/api';
 
 export const fetchCars = () => axios.get(`${API_BASE_URL}/cars`);
 // export const createProduct = (productsData: any) =>
