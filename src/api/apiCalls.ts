@@ -2,8 +2,8 @@
 import { Car, Transaction } from '../types/interfaceModels';
  
 // const API_BASE_URL = 'http://localhost:3000/api'; 
-const API_BASE_URL = 'http://192.168.1.4:3000/api'; //uncomment this for testing on phone
-// const API_BASE_URL = 'https://safir-be-app-self.vercel.app/api';
+// const API_BASE_URL = 'http://192.168.1.4:3000/api'; //uncomment this for testing on phone
+const API_BASE_URL = 'https://safir-be-app-self.vercel.app/api';
 
 export const fetchCars = () => axios.get(`${API_BASE_URL}/cars`);
 export const fetchCarByVin = (vin:string) => axios.get(`${API_BASE_URL}/cars?vin=${vin}`);
