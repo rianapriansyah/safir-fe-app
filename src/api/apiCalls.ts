@@ -11,6 +11,8 @@ export const updateCar = (vin:string, carDate: Car) =>
   axios.put(`${API_BASE_URL}/cars?vin=${vin}`, carDate);
 
 export const fetchTransactions = () => axios.get(`${API_BASE_URL}/transactions`);
+export const fetchLatestUnfinishedTransactionByVin = (vin:string) => 
+  axios.get(`${API_BASE_URL}/transactions?vin=${vin}&unfinished=true`);
 export const createTransaction = (transactionData: Transaction) =>
   axios.post(`${API_BASE_URL}/transactions`, transactionData);
 

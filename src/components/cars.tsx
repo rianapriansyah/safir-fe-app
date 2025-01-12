@@ -1,10 +1,9 @@
 ﻿import React from "react";
 import { useEffect, useState } from "react";
-import { Actions, Car, CarTransaction, Transaction } from "../types/interfaceModels";
-import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
-import EditIcon from '@mui/icons-material/Edit';
+import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
+import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { createTransaction, fetchCars, updateCar } from "../api/apiCalls";
+import { createTransaction, fetchCars, fetchLatestUnfinishedTransactionByVin, updateCar } from "../api/apiCalls";
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -27,7 +26,7 @@ const emptyTransaction:Transaction={
 	renterPhone:"",
 	out:new Date(),
 	in:new Date(),
-	rentType:"",
+	rentType:RentType.Daily,
 	fuelOut:"",
 	fuelIn:"",
 	expectedPayment:0,
@@ -66,13 +65,6 @@ const CarList: React.FC = () => {
 			const data = await fetchCars();
 			const sortedCar = data.data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name))
 			setCars(sortedCar);
-
-			// const test = await fetchTransactions();
-			// console.log(test);
-			// setCarTransaction({
-			// 	car: emptyCar,
-			// 	transaction: emptyTransaction,
-			// });
 		} catch (error) {
 			console.error('Error fetching products:', error);
 			triggerSnack('Kesalahan dalam mengambil data mobil');
@@ -124,7 +116,19 @@ const CarList: React.FC = () => {
     },
   }));
 
-	const openCarModal = (car: Car, ready: boolean) => {
+	const openCarModal = async (car: Car, ready: boolean) => {
+		let updatedTransaction;
+		if(!ready){
+			const data = await fetchLatestUnfinishedTransactionByVin(car.vin);
+			updatedTransaction=data.data;
+		}
+		else{
+			updatedTransaction={
+				...emptyTransaction,
+				vin:car.vin,
+				name:car.name
+			}
+		}
 		const act = car.ready? Actions.Out : Actions.In;
 		setAction(act);
 
@@ -134,20 +138,9 @@ const CarList: React.FC = () => {
 			ready: isReady,
 		};
 
-		const updatedTransaction={
-			...emptyTransaction,
-			vin:car.vin,
-			name:car.name
-		}
-
 		setCarTransaction({car:updatedCar, transaction:updatedTransaction});
     setCarModalState(true);
   };
-
-	// const closeProductModal = () => {
-	// 	handleFetchProduct();
-  //   setProductModalState(false);
-  // };
 
 	const closeCarModal = () => {
 		handleFetchCars();
@@ -186,8 +179,7 @@ const CarList: React.FC = () => {
 								<TableHead>
 									<TableRow>
 										<StyledTableCell>Mobil</StyledTableCell>
-										<StyledTableCell>Status</StyledTableCell>
-										<StyledTableCell align="right">Aksi</StyledTableCell>
+										<StyledTableCell align="right">Status</StyledTableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
@@ -199,21 +191,12 @@ const CarList: React.FC = () => {
 											{car.vin} - {car.name}
 										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>{car.dailyRate}</Typography>
 										</StyledTableCell>
-										<StyledTableCell>
-										{car.ready? <Chip icon={<LoginIcon color="success"/>} label="Ready" />  :<Chip icon={<LogoutIcon color="error"/>} label="Keluar" />}
-										</StyledTableCell>
-										
 										<StyledTableCell align="right">
-											<ToggleButtonGroup
-											color="primary"
-												size='small'
-												exclusive
-												aria-label="action button"
-											>                   
-												<ToggleButton value="update" onClick={() => openCarModal(car, car.ready)}>
-													<EditIcon  />
-												</ToggleButton>
-											</ToggleButtonGroup>
+										<Chip
+											icon={car.ready ? <LoginIcon color="success" /> : <LogoutIcon color="error" />}
+											label={car.ready ? "Ready" : "Keluar"}
+											onClick={() => openCarModal(car, car.ready)}
+										/>
 										</StyledTableCell>
 									</StyledTableRow >
 									))}

@@ -37,7 +37,7 @@ const CarRentalModal: React.FC<carModalProps> = ({
       ...localCarTransaction,
       transaction: {
         ...localCarTransaction.transaction,
-        rentType: e.target.value,
+        rentType: e.target.value as RentType,
       },
     })
 	}
@@ -49,10 +49,11 @@ return (
 					<Stack spacing={2}>
 						<Stack spacing={2}>
 								<TextField
+									disabled={action===Actions.In}
 									required
 									margin="dense"
-									id="renterName"
-									name="renterName"
+									id="renter_name"
+									name="renter_name"
 									label="Nama Pemakai"
 									type="text"
 									fullWidth
@@ -63,6 +64,7 @@ return (
 									} })}
 								/>
 								<TextField
+									disabled={action===Actions.In}
 									margin="dense"
 									id="renterPhone"
 									name="renterPhone"
@@ -76,6 +78,7 @@ return (
 									} })}
 								/>
 								<TextField
+									disabled={action===Actions.In}
 									margin="dense"
 									id="desc"
 									name="desc"
@@ -120,22 +123,22 @@ return (
 								/>
 						</Stack>
 						<FormControl fullWidth variant="standard">
-							<InputLabel id="kitchen-select-label" autoFocus>Pemakaian</InputLabel>
-								<Select
-									disabled={action==Actions.In}
-									required
-									labelId="kitchen-select-label"
-									id="kitchen-select-label"
-									value={localCarTransaction.transaction.rentType}
-								 	onChange={handleChangeRentType}
-									>
-										{Object.entries(RentType).map(([key, value]) => (
-											<MenuItem key={key} value={key}>
-												{value}
-											</MenuItem>
-										))}
-								</Select>
-							</FormControl>
+							<InputLabel id="rentType" autoFocus>Pemakaian</InputLabel>
+							<Select
+								disabled={action==Actions.In}
+								required
+								labelId="rentType"
+								id="rentType"
+								value={localCarTransaction.transaction.rentType || RentType.Daily}
+								onChange={handleChangeRentType}
+								>
+									{Object.entries(RentType).map(([key, value]) => (
+										<MenuItem key={key} value={key}>
+											{value}
+										</MenuItem>
+									))}
+							</Select>
+						</FormControl>
 					</Stack>
         </DialogContent>
         <DialogActions>
