@@ -1,13 +1,21 @@
 ﻿import axios from 'axios';
+import { Car, Transaction } from '../types/interfaceModels';
  
-// const API_BASE_URL = 'http://localhost:3000/api';
-const API_BASE_URL = 'https://safir-be-app-self.vercel.app/api';
+// const API_BASE_URL = 'http://localhost:3000/api'; 
+const API_BASE_URL = 'http://192.168.1.4:3000/api'; //uncomment this for testing on phone
+// const API_BASE_URL = 'https://safir-be-app-self.vercel.app/api';
 
 export const fetchCars = () => axios.get(`${API_BASE_URL}/cars`);
+export const fetchCarByVin = (vin:string) => axios.get(`${API_BASE_URL}/cars?vin=${vin}`);
+export const updateCar = (vin:string, carDate: Car) =>
+  axios.put(`${API_BASE_URL}/cars?vin=${vin}`, carDate);
+
+export const fetchTransactions = () => axios.get(`${API_BASE_URL}/transactions`);
+export const createTransaction = (transactionData: Transaction) =>
+  axios.post(`${API_BASE_URL}/transactions`, transactionData);
+
 // export const createProduct = (productsData: any) =>
 //   axios.post(`${API_BASE_URL}/products`, productsData);
-// export const updateProduct = (productId:any, productsData: any) =>
-//   axios.put(`${API_BASE_URL}/products/${productId}`, productsData);
 // export const deleteProduct = (productId:any) =>
 //   axios.delete(`${API_BASE_URL}/products/${productId}`);
 

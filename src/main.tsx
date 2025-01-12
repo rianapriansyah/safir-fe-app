@@ -9,5 +9,5 @@ createRoot(document.getElementById('root')!).render(
     <StyledEngineProvider injectFirst>
       <App />
     </StyledEngineProvider>
-  </StrictMode>,
+  </StrictMode>
 )

@@ -1,4 +1,4 @@
-﻿export interface Car {
+export interface Car {
 	id: number;
 	vin:string;
 	owned:boolean;
@@ -11,11 +11,23 @@
 
 export interface Transaction {
 	id: number;
+	vin:string;
+	name:string;
+	renterName:string;
+	renterPhone:string
+  out:Date;
+	in:Date;
+	rentType:string;
+	fuelOut:string;
+	fuelIn:string;
+	expectedPayment:number;
+	actualPayment:number;
+	desc:string;
+}
+
+export interface CarTransaction {
 	car:Car;
-	rentedBy:string;
-  out:string;
-	in:string;
-	rentType:RentType;
+	transaction:Transaction;
 }
 
 export enum Actions{

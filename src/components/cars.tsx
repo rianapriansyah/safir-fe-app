@@ -1,50 +1,51 @@
 ﻿import React from "react";
 import { useEffect, useState } from "react";
-import { Actions, Car } from "../types/interfaceModels";
-import { Box, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
+import { Actions, Car, CarTransaction, Transaction } from "../types/interfaceModels";
+import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import CarRentalModal from "./carRentalModal";
-import { fetchCars } from "../api/apiCalls";
+import { createTransaction, fetchCars, updateCar } from "../api/apiCalls";
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-const availableCars:Car[]=[
-	{
-		id: 1,
-		vin: "DN1349",
-		name: "Veloz Putih",
-		owned: true,
-		dailyRate: 350000,
-		threeHourRate: 150000,
-		ready: true,
-		monthlyRate: 0
-	},
-	{
-		id: 2,
-		vin: "DN1521",
-		name: "Rush Maroon",
-		owned: false,
-		dailyRate: 350000,
-		threeHourRate: 150000,
-		ready: true,
-		monthlyRate: 0
-	},
-	{
-		id: 3,
-		vin: "DN1677JK",
-		name: "Avanza Gray",
-		owned: true,
-		dailyRate: 300000,
-		threeHourRate: 100000,
-		ready: true,
-		monthlyRate: 0
-	},
-];
+const emptyCar:Car={
+	id: 0,
+	vin: "",
+	name: "",
+	owned: false,
+	dailyRate: 0,
+	threeHourRate: 0,
+	ready: false,
+	monthlyRate: 0
+};
+
+const emptyTransaction:Transaction={
+	id: 0,
+	vin:"",
+	name:"",
+	renterName:"",
+	renterPhone:"",
+	out:new Date(),
+	in:new Date(),
+	rentType:"",
+	fuelOut:"",
+	fuelIn:"",
+	expectedPayment:0,
+	actualPayment:0,
+	desc:"",
+}
+
+const emptyCarTransaction: CarTransaction = {
+  car: emptyCar,
+  transaction: emptyTransaction,
+};
 
 const CarList: React.FC = () => {
-	const [cars, setCars] = useState<Car[]>(availableCars);
+	const [cars, setCars] = useState<Car[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCarModalOpen, setCarModalState] = useState(false); // Product Modal state
-	const [selectedCar, setSelectedCar] = useState<Car>(availableCars[0]);
+	const [selectedCarTransaction, setCarTransaction] = useState<CarTransaction>(emptyCarTransaction);
 	const [postMessage, setMessage] = useState(""); 
 	const [openSnack, setOpenSnack] = React.useState(false);
 	const handleCloseSnack = () => setOpenSnack(false);
@@ -53,20 +54,51 @@ const CarList: React.FC = () => {
 	useEffect(() => {
 		const loadProducts = async () => {
 			setLoading(true);
-			handleFetchCar();
+			handleFetchCars();
 			setLoading(false);
 		};
 
 		loadProducts();
 	}, []);
 
-	const handleFetchCar = async () => {
+	const handleFetchCars = async () => {
 		try {
 			const data = await fetchCars();
-			setCars(data.data);
+			const sortedCar = data.data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name))
+			setCars(sortedCar);
+
+			// const test = await fetchTransactions();
+			// console.log(test);
+			// setCarTransaction({
+			// 	car: emptyCar,
+			// 	transaction: emptyTransaction,
+			// });
 		} catch (error) {
 			console.error('Error fetching products:', error);
 			triggerSnack('Kesalahan dalam mengambil data mobil');
+			alert(error);
+		}
+	};
+
+	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
+		//console.log(carTransaction);
+		
+		try {
+			let message = "";
+
+			//update car ready status
+			await updateCar(carTransaction.car.vin, carTransaction.car);
+
+			//create new transaction
+			await createTransaction(carTransaction.transaction);
+
+			message = "Diubah!";
+			handleFetchCars(); // Refresh the product list
+			setCarModalState(false); // Close the modal
+			triggerSnack(`${carTransaction.car.name} ${message}`);
+		} catch (error) {
+			console.error('Error saving product:', error);
+			triggerSnack(`Error saving product-${carTransaction.car.name}`);
 		}
 	};
 
@@ -92,17 +124,25 @@ const CarList: React.FC = () => {
     },
   }));
 
-	const openCarModal = (car:Car, ) => {
-		setAction(action);
-		setSelectedCar(car);
+	const openCarModal = (car: Car, ready: boolean) => {
+		const act = car.ready? Actions.Out : Actions.In;
+		setAction(act);
+
+		const isReady = !ready;
+		const updatedCar = {
+			...car,
+			ready: isReady,
+		};
+
+		const updatedTransaction={
+			...emptyTransaction,
+			vin:car.vin,
+			name:car.name
+		}
+
+		setCarTransaction({car:updatedCar, transaction:updatedTransaction});
     setCarModalState(true);
   };
-
-	// const openCategoryModal = (category:Category, action:Actions) => {
-	// 	setAction(action);
-	// 	setSelectedCategory(category);
-  //   setCategoryModalState(true);
-  // };
 
 	// const closeProductModal = () => {
 	// 	handleFetchProduct();
@@ -110,7 +150,7 @@ const CarList: React.FC = () => {
   // };
 
 	const closeCarModal = () => {
-		handleFetchCar();
+		handleFetchCars();
     setCarModalState(false);
   };
 
@@ -120,10 +160,9 @@ const CarList: React.FC = () => {
   };
 
 	return (
-		<Grid>
-		<Box component="section" sx={{ flexGrow:1, p: 2, border: '1px dashed grey', borderRadius:"10px" }}>
+		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>
 			<Grid container rowSpacing={1} spacing={{ xs: 2, md: 2 }} columns={{ xs: 1, sm: 1, md: 12 }}>
-				<Grid size={6}>
+				<Grid size={12}>
 				<Stack spacing={2}>
 					<Typography variant="h4" gutterBottom>
 							Daftar Mobil
@@ -147,21 +186,21 @@ const CarList: React.FC = () => {
 								<TableHead>
 									<TableRow>
 										<StyledTableCell>Mobil</StyledTableCell>
-										<StyledTableCell>Harian</StyledTableCell>
+										<StyledTableCell>Status</StyledTableCell>
 										<StyledTableCell align="right">Aksi</StyledTableCell>
 									</TableRow>
 								</TableHead>
 								<TableBody>
 								{cars.filter((car) =>
-											car.name.toLowerCase().includes(searchQuery.toLowerCase())
+											car.vin.toLowerCase().includes(searchQuery.toLowerCase())
 										).map((car) => (
 									<StyledTableRow  key={car.id}>
 										<StyledTableCell>
-											{car.name}
-										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>{car.vin}</Typography>
+											{car.vin} - {car.name}
+										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>{car.dailyRate}</Typography>
 										</StyledTableCell>
 										<StyledTableCell>
-											{car.dailyRate}
+										{car.ready? <Chip icon={<LoginIcon color="success"/>} label="Ready" />  :<Chip icon={<LogoutIcon color="error"/>} label="Keluar" />}
 										</StyledTableCell>
 										
 										<StyledTableCell align="right">
@@ -171,12 +210,9 @@ const CarList: React.FC = () => {
 												exclusive
 												aria-label="action button"
 											>                   
-												<ToggleButton value="update" onClick={() => openCarModal(car)}>
+												<ToggleButton value="update" onClick={() => openCarModal(car, car.ready)}>
 													<EditIcon  />
 												</ToggleButton>
-												{/* <ToggleButton value="delete" onClick={() => openProductModal(product, Actions.Delete)}>
-													<DeleteIcon  />
-												</ToggleButton> */}
 											</ToggleButtonGroup>
 										</StyledTableCell>
 									</StyledTableRow >
@@ -192,10 +228,10 @@ const CarList: React.FC = () => {
 			</Grid>
 			
 			<CarRentalModal
-				car={selectedCar}
+				carTransaction={selectedCarTransaction}
 				isModalOpen={isCarModalOpen} 
 				onCloseModal={() => closeCarModal()}	
-				// onSaveCategory={handleSaveCategory} // Callback for saving product
+				onUpdateCarTransaction={handleUpdateCarTransaction} // Callback for saving product
 				// onDeleteCategory={handleDeleteCategory} // Callback for saving product
 				action={action}
 			/>
@@ -207,7 +243,6 @@ const CarList: React.FC = () => {
         message={postMessage}
       />
 		</Box>
-		</Grid>
 	);
 };
 

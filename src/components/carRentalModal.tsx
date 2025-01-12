@@ -1,79 +1,146 @@
-﻿import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField  } from '@mui/material';
+﻿import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Actions, Car } from "../types/interfaceModels";
+import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
 
 
 interface carModalProps {
-	car:Car;
+	carTransaction:CarTransaction;
 	isModalOpen: boolean;
 	action: Actions;
 	onCloseModal: () => void;
-	// onSavecar: (car: car) => void; // Callback for saving the car
+	onUpdateCarTransaction: (carTransaction: CarTransaction) => void; // Callback for saving the car
 	// onDeletecar: (car: car) => void; // Callback for saving the car
 }
 
 const CarRentalModal: React.FC<carModalProps> = ({
-	car,
+	carTransaction,
 	isModalOpen,
 	action,
 	onCloseModal,
-	// onSavecar,
+	onUpdateCarTransaction,
 	// onDeletecar
 }) => {
 
-  const [localCar, setLocalCar] = useState<Car>(car); // Local state for the note
+  const [localCarTransaction, setLocalCarTransaction] = useState<CarTransaction>(carTransaction); // Local state for the note
 
 	useEffect(() => {
-		setLocalCar(car); // Update localCar when the modal opens
-	}, [car]);
+		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
+	}, [carTransaction]);
 
 	const handleAction = async () => {
-		setLocalCar(localCar);
-
-		// if(action==Actions.Delete){
-		// 	onDeletecar(localCar); // Call the save function passed from the parent
-		// }else{
-		// 	onSavecar(localCar); // Call the save function passed from the parent
-		// }		
+		setLocalCarTransaction(localCarTransaction);
+		onUpdateCarTransaction(localCarTransaction); // Call the save function passed from the parent
 	};
+
+	const handleChangeRentType = async (e: SelectChangeEvent<string>) => {
+		setLocalCarTransaction({
+      ...localCarTransaction,
+      transaction: {
+        ...localCarTransaction.transaction,
+        rentType: e.target.value,
+      },
+    })
+	}
 
 return (
     <Dialog open={isModalOpen} onClose={onCloseModal} fullWidth={true}>
-        <DialogTitle>{localCar.vin}</DialogTitle>
+        <DialogTitle>{localCarTransaction.car.vin} - {localCarTransaction.car.name}</DialogTitle>
         <DialogContent>
-				<Stack spacing={2}>
-				<Stack spacing={2} direction="row">
-						<TextField
-							disabled
-							required
-							margin="dense"
-							id="carName"
-							name="carName"
-							label="Nama Kategori"
-							type="text"
-							fullWidth
-							variant="standard"
-							value={localCar.name}
-							onChange={(e: { target: { value: any; }; }) => setLocalCar({ ...localCar, name: e.target.value })}
-						/>
-						<TextField
-							disabled
-							required
-							margin="dense"
-							id="price"
-							name="carDescription"
-							label="Deskripsi"
-							type="text"
-							fullWidth
-							variant="standard"
-							// onChange={(e: { target: { value: any; }; }) => setLocalCar({ ...localCar, description: e.target.value })}
-						/>
+					<Stack spacing={2}>
+						<Stack spacing={2}>
+								<TextField
+									required
+									margin="dense"
+									id="renterName"
+									name="renterName"
+									label="Nama Pemakai"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.renterName}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, renterName:e.target.value
+									} })}
+								/>
+								<TextField
+									margin="dense"
+									id="renterPhone"
+									name="renterPhone"
+									label="No HP"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.renterPhone}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, renterPhone:e.target.value
+									} })}
+								/>
+								<TextField
+									margin="dense"
+									id="desc"
+									name="desc"
+									label="Keterangan"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.desc}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, desc:e.target.value
+									} })}
+								/>
+							</Stack>
+						<Stack spacing={2} direction="row">
+							<TextField
+									disabled={action===Actions.In}
+									margin="dense"
+									id="fuelOut"
+									name="fuelOut"
+									label="BBM Keluar"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.fuelOut}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, fuelOut:e.target.value
+									} })}
+								/>
+								<TextField
+									disabled={action===Actions.Out}
+									margin="dense"
+									id="fuelIn"
+									name="fuelIn"
+									label="BBM Masuk"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.fuelIn}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, fuelIn:e.target.value
+									} })}
+								/>
+						</Stack>
+						<FormControl fullWidth variant="standard">
+							<InputLabel id="kitchen-select-label" autoFocus>Pemakaian</InputLabel>
+								<Select
+									disabled={action==Actions.In}
+									required
+									labelId="kitchen-select-label"
+									id="kitchen-select-label"
+									value={localCarTransaction.transaction.rentType}
+								 	onChange={handleChangeRentType}
+									>
+										{Object.entries(RentType).map(([key, value]) => (
+											<MenuItem key={key} value={key}>
+												{value}
+											</MenuItem>
+										))}
+								</Select>
+							</FormControl>
 					</Stack>
-				</Stack>
         </DialogContent>
         <DialogActions>
 				<Button onClick={onCloseModal}>Batal</Button>
-				<Button onClick={()=>handleAction()}>{`Mobil ${action.toString()}`}</Button>
+				<Button onClick={()=>handleAction()}>{`${action.toString()}`}</Button>
         </DialogActions>
     </Dialog>
 	);
