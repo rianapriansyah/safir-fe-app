@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
 import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { createTransaction, fetchCars, fetchLatestUnfinishedTransactionByVin, updateCar } from "../api/apiCalls";
+import { createTransaction, fetchCars, fetchLatestUnfinishedTransactionByVin, updateCar, updateTransaction } from "../api/apiCalls";
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 
@@ -26,12 +26,13 @@ const emptyTransaction:Transaction={
 	renterPhone:"",
 	out:new Date(),
 	in:new Date(),
-	rentType:RentType.Daily,
+	rentType: Object.keys(RentType)[Object.values(RentType).indexOf(RentType.Daily)],
 	fuelOut:"",
 	fuelIn:"",
 	expectedPayment:0,
 	actualPayment:0,
 	desc:"",
+	completed:false
 }
 
 const emptyCarTransaction: CarTransaction = {
@@ -51,13 +52,12 @@ const CarList: React.FC = () => {
 	const [action, setAction] = useState<Actions>(Actions.Out);
 
 	useEffect(() => {
-		const loadProducts = async () => {
+		const loadCars = async () => {
 			setLoading(true);
 			handleFetchCars();
 			setLoading(false);
 		};
-
-		loadProducts();
+		loadCars();
 	}, []);
 
 	const handleFetchCars = async () => {
@@ -73,16 +73,22 @@ const CarList: React.FC = () => {
 	};
 
 	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
-		//console.log(carTransaction);
-		
+	 	console.log(carTransaction);
 		try {
 			let message = "";
 
 			//update car ready status
 			await updateCar(carTransaction.car.vin, carTransaction.car);
 
-			//create new transaction
-			await createTransaction(carTransaction.transaction);
+			if(carTransaction.transaction.id===0){
+				//create new transaction
+				await createTransaction(carTransaction.transaction);
+			}
+			else{
+				//update transaction
+				carTransaction.transaction.completed = true;
+				await updateTransaction(carTransaction.transaction.id,carTransaction.transaction);
+			}
 
 			message = "Diubah!";
 			handleFetchCars(); // Refresh the product list
@@ -120,6 +126,7 @@ const CarList: React.FC = () => {
 		let updatedTransaction;
 		if(!ready){
 			const data = await fetchLatestUnfinishedTransactionByVin(car.vin);
+			console.log(data.data);
 			updatedTransaction=data.data;
 		}
 		else{
@@ -138,13 +145,26 @@ const CarList: React.FC = () => {
 			ready: isReady,
 		};
 
+		updatedTransaction={
+			...updatedTransaction,
+			in:new Date(),
+			expectedPayment: calculateExpectedPayment(car, updatedTransaction)
+		}
+
 		setCarTransaction({car:updatedCar, transaction:updatedTransaction});
     setCarModalState(true);
   };
 
+	const calculateExpectedPayment = (car:Car, transaction:Transaction) => {
+			if (!transaction.in) return 0; // Handle null for unfinished transactions
+			const totalDays = Math.ceil((new Date(transaction.in).getTime() - new Date(transaction.out).getTime()) / (1000 * 60 * 60 * 24));
+			return totalDays * car.dailyRate;
+	}
+
 	const closeCarModal = () => {
 		handleFetchCars();
     setCarModalState(false);
+		setCarTransaction(emptyCarTransaction);
   };
 
 	const triggerSnack = (msg:string) => {

@@ -23,6 +23,7 @@ export interface Transaction {
 	expectedPayment:number;
 	actualPayment:number;
 	desc:string;
+	completed:boolean;
 }
 
 export interface CarTransaction {
@@ -36,7 +37,7 @@ export enum Actions{
 }
 
 export enum RentType{
-  ThreeHour = "Tiga Jam",
-  Daily = "Harian",
-	Monthly = "Bulanan"
+  ThreeHour = <any>"Tiga Jam",
+  Daily = <any>"Harian",
+	Monthly = <any>"Bulanan"
 }

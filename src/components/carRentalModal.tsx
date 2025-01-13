@@ -1,7 +1,9 @@
-﻿import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField  } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
-
+import { format } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
+import { id } from 'date-fns/locale'
 
 interface carModalProps {
 	carTransaction:CarTransaction;
@@ -37,16 +39,17 @@ const CarRentalModal: React.FC<carModalProps> = ({
       ...localCarTransaction,
       transaction: {
         ...localCarTransaction.transaction,
-        rentType: e.target.value as RentType,
+        rentType: e.target.value,
       },
     })
 	}
+	
 
 return (
     <Dialog open={isModalOpen} onClose={onCloseModal} fullWidth={true}>
-        <DialogTitle>{localCarTransaction.car.vin} - {localCarTransaction.car.name}</DialogTitle>
+        <DialogTitle>{localCarTransaction.car.name} - {localCarTransaction.car.vin}</DialogTitle>
         <DialogContent>
-					<Stack spacing={2}>
+					<Stack spacing={2} >
 						<Stack spacing={2}>
 								<TextField
 									disabled={action===Actions.In}
@@ -93,6 +96,23 @@ return (
 								/>
 							</Stack>
 						<Stack spacing={2} direction="row">
+							<FormControl fullWidth variant="standard">
+								<InputLabel id="rentType" autoFocus>Pemakaian</InputLabel>
+								<Select
+									disabled={action==Actions.In}
+									required
+									labelId="rentType"
+									id="rentType"
+									value={localCarTransaction.transaction.rentType}
+									onChange={handleChangeRentType}
+									>
+										{Object.entries(RentType).map(([key, value]) => (
+											<MenuItem key={key} value={key}>
+												{value}
+											</MenuItem>
+										))}
+								</Select>
+							</FormControl>
 							<TextField
 									disabled={action===Actions.In}
 									margin="dense"
@@ -122,23 +142,39 @@ return (
 									} })}
 								/>
 						</Stack>
-						<FormControl fullWidth variant="standard">
-							<InputLabel id="rentType" autoFocus>Pemakaian</InputLabel>
-							<Select
-								disabled={action==Actions.In}
-								required
-								labelId="rentType"
-								id="rentType"
-								value={localCarTransaction.transaction.rentType || RentType.Daily}
-								onChange={handleChangeRentType}
-								>
-									{Object.entries(RentType).map(([key, value]) => (
-										<MenuItem key={key} value={key}>
-											{value}
-										</MenuItem>
-									))}
-							</Select>
-						</FormControl>
+						<Stack spacing={2} direction="row">
+							<TextField
+									disabled
+									margin="dense"
+									id="expectedPayment"
+									name="expectedPayment"
+									label="Pembayaran seharusnya"
+									type="number"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.expectedPayment}
+								/>
+								<TextField
+									disabled={action===Actions.Out}
+									margin="dense"
+									id="actualPayment"
+									name="actualPayment"
+									label="Pembayaran Diterima"
+									type="number"
+									fullWidth
+									variant="standard"
+									value={localCarTransaction.transaction.actualPayment}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, actualPayment:e.target.value
+									} })}
+								/>
+						</Stack>
+						<Typography variant="caption">
+							Durasi {formatDistanceToNow(localCarTransaction.transaction.out, {locale:id})}
+						</Typography>
+						<Typography variant="caption" gutterBottom>
+						Diambil {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} 
+						</Typography>
 					</Stack>
         </DialogContent>
         <DialogActions>
