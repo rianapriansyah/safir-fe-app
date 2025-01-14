@@ -28,7 +28,6 @@ const CarRentalModal: React.FC<carModalProps> = ({
 
 	useEffect(() => {
 		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
-		console.log(carTransaction);
 	}, [carTransaction]);
 
 	const handleAction = async () => {
@@ -160,19 +159,16 @@ return (
 								/>
 						</Stack>
 						<Stack>
-						<Typography variant="caption">
-							Durasi {formatDistanceToNow(localCarTransaction.transaction.out, {locale:id, addSuffix: true})}
-
-						</Typography>
 						<Typography variant="caption" gutterBottom>
-							Diambil {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} 
+							Terhitung dari {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} {', '}
+							{formatDistanceToNow(localCarTransaction.transaction.out, {locale:id, addSuffix: true})}
 						</Typography>
-						</Stack>
 						<Typography variant="body1">
 							Tagihan {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(
 								calculateUsageDurationAndCost(localCarTransaction).totalCost
 								)}
 						</Typography>
+						</Stack>
 					</Stack>
         </DialogContent>
         <DialogActions>

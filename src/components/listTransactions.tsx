@@ -16,8 +16,9 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
-import { fetchCars, fetchTransactionsByVin } from "../api/apiCalls";
 import { Transaction } from '../types/interfaceModels';
+import { getAllCars } from '../services/carService';
+import { getAllTransactionsByVin } from '../services/transactionService';
 
 export interface Car {
   vin: string;
@@ -34,8 +35,8 @@ const ListTransactions: React.FC = () => {
   useEffect(() => {
     const loadCars = async () => {
       try {
-        const carData = await fetchCars();
-        setCars(carData.data);
+        const carData = await getAllCars();
+        setCars(carData);
       } catch (error) {
         console.error('Error fetching cars:', error);
       }
@@ -48,9 +49,9 @@ const ListTransactions: React.FC = () => {
     if (selectedVin) {
       const loadTransactions = async () => {
         try {
-          const transactionData = await fetchTransactionsByVin(selectedVin);
-					console.log(transactionData.data);
-          setTransactions(transactionData.data);
+          const transactionData = await getAllTransactionsByVin(selectedVin);
+					console.log(transactionData);
+          setTransactions(transactionData);
         } catch (error) {
           console.error('Error fetching transactions:', error);
         }

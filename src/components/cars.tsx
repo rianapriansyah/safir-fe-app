@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
 import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { createTransaction, fetchCars, fetchLatestUnfinishedTransactionByVin, updateCar, updateTransaction } from "../api/apiCalls";
+// import { createTransaction, fetchLatestUnfinishedTransactionByVin, updateTransaction } from "../api/apiCalls";
+import { getAllCars, updateCar } from "../services/carService";
+import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
 
 const emptyCar:Car={
 	id: 0,
@@ -61,8 +63,8 @@ const CarList: React.FC = () => {
 
 	const handleFetchCars = async () => {
 		try {
-			const data = await fetchCars();
-			const sortedCar = data.data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name))
+			const data = await getAllCars();
+			const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name))
 			setCars(sortedCar);
 		} catch (error) {
 			console.error('Error fetching products:', error);
@@ -75,13 +77,12 @@ const CarList: React.FC = () => {
 	 	// console.log(carTransaction);
 		try {
 			let message = "";
-
 			//update car ready status
 			await updateCar(carTransaction.car.vin, carTransaction.car);
 
 			if(carTransaction.transaction.id===0){
 				//create new transaction
-				await createTransaction(carTransaction.transaction);
+				await addTransaction(carTransaction.transaction);
 			}
 			else{
 				//update transaction
@@ -122,10 +123,12 @@ const CarList: React.FC = () => {
   }));
 
 	const openCarModal = async (car: Car, ready: boolean) => {
-		let updatedTransaction;
+		let updatedTransaction:any;
 		if(!ready){
-			const data = await fetchLatestUnfinishedTransactionByVin(car.vin);
-			updatedTransaction=data.data;
+			const data = await getLatestTransactionByVinAndCompletedStatus(car.vin, "false");
+			updatedTransaction=data;
+			console.log(data);
+			console.log(updatedTransaction);
 		}
 		else{
 			updatedTransaction={
