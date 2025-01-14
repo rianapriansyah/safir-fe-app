@@ -4,8 +4,6 @@ import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/in
 import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { createTransaction, fetchCars, fetchLatestUnfinishedTransactionByVin, updateCar, updateTransaction } from "../api/apiCalls";
-import LoginIcon from '@mui/icons-material/Login';
-import LogoutIcon from '@mui/icons-material/Logout';
 
 const emptyCar:Car={
 	id: 0,
@@ -55,6 +53,7 @@ const CarList: React.FC = () => {
 		const loadCars = async () => {
 			setLoading(true);
 			handleFetchCars();
+			setCarTransaction(emptyCarTransaction);
 			setLoading(false);
 		};
 		loadCars();
@@ -73,7 +72,7 @@ const CarList: React.FC = () => {
 	};
 
 	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
-	 	console.log(carTransaction);
+	 	// console.log(carTransaction);
 		try {
 			let message = "";
 
@@ -126,14 +125,15 @@ const CarList: React.FC = () => {
 		let updatedTransaction;
 		if(!ready){
 			const data = await fetchLatestUnfinishedTransactionByVin(car.vin);
-			console.log(data.data);
 			updatedTransaction=data.data;
 		}
 		else{
 			updatedTransaction={
 				...emptyTransaction,
 				vin:car.vin,
-				name:car.name
+				name:car.name,
+				expectedPayment: car.dailyRate, // Set default expected payment to daily rate
+				out:new Date()
 			}
 		}
 		const act = car.ready? Actions.Out : Actions.In;
@@ -145,21 +145,9 @@ const CarList: React.FC = () => {
 			ready: isReady,
 		};
 
-		updatedTransaction={
-			...updatedTransaction,
-			in:new Date(),
-			expectedPayment: calculateExpectedPayment(car, updatedTransaction)
-		}
-
 		setCarTransaction({car:updatedCar, transaction:updatedTransaction});
     setCarModalState(true);
   };
-
-	const calculateExpectedPayment = (car:Car, transaction:Transaction) => {
-			if (!transaction.in) return 0; // Handle null for unfinished transactions
-			const totalDays = Math.ceil((new Date(transaction.in).getTime() - new Date(transaction.out).getTime()) / (1000 * 60 * 60 * 24));
-			return totalDays * car.dailyRate;
-	}
 
 	const closeCarModal = () => {
 		handleFetchCars();
@@ -208,12 +196,14 @@ const CarList: React.FC = () => {
 										).map((car) => (
 									<StyledTableRow  key={car.id}>
 										<StyledTableCell>
-											{car.vin} - {car.name}
-										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>{car.dailyRate}</Typography>
+										{car.name} - {car.vin}
+										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
+											{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(car.dailyRate)} / Hari
+										</Typography>
 										</StyledTableCell>
 										<StyledTableCell align="right">
 										<Chip
-											icon={car.ready ? <LoginIcon color="success" /> : <LogoutIcon color="error" />}
+											color={car.ready ? "success"  : "error" }
 											label={car.ready ? "Ready" : "Keluar"}
 											onClick={() => openCarModal(car, car.ready)}
 										/>

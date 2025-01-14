@@ -2,8 +2,9 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
 import React, { useEffect, useState } from 'react';
 import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
 import { format } from "date-fns";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow  } from "date-fns";
 import { id } from 'date-fns/locale'
+import { calculateUsageDurationAndCost } from '../helper/durationCalculator';
 
 interface carModalProps {
 	carTransaction:CarTransaction;
@@ -27,6 +28,7 @@ const CarRentalModal: React.FC<carModalProps> = ({
 
 	useEffect(() => {
 		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
+		console.log(carTransaction);
 	}, [carTransaction]);
 
 	const handleAction = async () => {
@@ -43,7 +45,6 @@ const CarRentalModal: React.FC<carModalProps> = ({
       },
     })
 	}
-	
 
 return (
     <Dialog open={isModalOpen} onClose={onCloseModal} fullWidth={true}>
@@ -143,17 +144,6 @@ return (
 								/>
 						</Stack>
 						<Stack spacing={2} direction="row">
-							<TextField
-									disabled
-									margin="dense"
-									id="expectedPayment"
-									name="expectedPayment"
-									label="Pembayaran seharusnya"
-									type="number"
-									fullWidth
-									variant="standard"
-									value={localCarTransaction.transaction.expectedPayment}
-								/>
 								<TextField
 									disabled={action===Actions.Out}
 									margin="dense"
@@ -169,11 +159,19 @@ return (
 									} })}
 								/>
 						</Stack>
+						<Stack>
 						<Typography variant="caption">
-							Durasi {formatDistanceToNow(localCarTransaction.transaction.out, {locale:id})}
+							Durasi {formatDistanceToNow(localCarTransaction.transaction.out, {locale:id, addSuffix: true})}
+
 						</Typography>
 						<Typography variant="caption" gutterBottom>
-						Diambil {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} 
+							Diambil {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} 
+						</Typography>
+						</Stack>
+						<Typography variant="body1">
+							Tagihan {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(
+								calculateUsageDurationAndCost(localCarTransaction).totalCost
+								)}
 						</Typography>
 					</Stack>
         </DialogContent>

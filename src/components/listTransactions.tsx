@@ -17,8 +17,6 @@ import {
 	Typography,
 } from '@mui/material';
 import { fetchCars, fetchTransactionsByVin } from "../api/apiCalls";
-import { format } from "date-fns";
-import { id } from 'date-fns/locale';
 import { Transaction } from '../types/interfaceModels';
 
 export interface Car {
@@ -88,7 +86,7 @@ const ListTransactions: React.FC = () => {
   return (
     <React.Fragment>
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '16px' }}>
-        <InputLabel id="car-select-label">Select a Car</InputLabel>
+        <InputLabel id="car-select-label">Pilih Mobil</InputLabel>
         <Select
           labelId="car-select-label"
           id="car-select"
@@ -104,11 +102,14 @@ const ListTransactions: React.FC = () => {
         </Select>
       </FormControl>
 			<Offset />
+			{/* <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 1, md: 3 }}>
+      <Gauge width={100} height={100} value={percentage / 100} />
+      <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
+    	</Stack> */}
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <StyledTableRow>
-              <StyledTableCell>ID</StyledTableCell>
 							<StyledTableCell>Keluar</StyledTableCell>
               <StyledTableCell>Masuk</StyledTableCell>
               <StyledTableCell>Nama Pemakai</StyledTableCell>
@@ -121,19 +122,18 @@ const ListTransactions: React.FC = () => {
           <TableBody>
             {transactions.map((transaction) => (
               <StyledTableRow key={transaction.id}>
-                <StyledTableCell>{transaction.id}</StyledTableCell>
-								<StyledTableCell>{format(new Date(transaction.out), "PPPP", {locale:id})}
+								<StyledTableCell>{new Intl.DateTimeFormat('id-ID', {dateStyle: 'full',timeZone: 'Asia/Makassar',}).format(new Date(transaction.out))}
 								<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-									{format(new Date(transaction.out), "HH:mm", {locale:id})} WITA
-									</Typography>
+									{new Intl.DateTimeFormat('id-ID', {timeStyle: 'long', timeZone: 'Asia/Makassar',}).format(new Date(transaction.out))} 
+								</Typography>
 								</StyledTableCell>
 								
                 <StyledTableCell>
-                  {transaction.in ? format(new Date(transaction.in), "PPPP", {locale:id}) : 'Not Returned'}
+									{transaction.completed ? new Intl.DateTimeFormat('id-ID', {dateStyle: 'full',timeZone: 'Asia/Makassar',}).format(new Date(transaction.in)) : ""}
 									<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-									{transaction.in ? format(new Date(transaction.in), "HH:mm", {locale:id}) : 'Not Returned'} WITA
+									{transaction.completed ? new Intl.DateTimeFormat('id-ID', {timeStyle: 'long', timeZone: 'Asia/Makassar',}).format(new Date(transaction.in)) : ""}
 									</Typography>
-									
+
                 </StyledTableCell>
                 <StyledTableCell>{transaction.renterName}
 									<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
