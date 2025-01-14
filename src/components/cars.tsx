@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
 import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-// import { createTransaction, fetchLatestUnfinishedTransactionByVin, updateTransaction } from "../api/apiCalls";
 import { getAllCars, updateCar } from "../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
 
