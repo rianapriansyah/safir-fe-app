@@ -126,8 +126,6 @@ const CarList: React.FC = () => {
 		if(!ready){
 			const data = await getLatestTransactionByVinAndCompletedStatus(car.vin, "false");
 			updatedTransaction=data;
-			console.log(data);
-			console.log(updatedTransaction);
 		}
 		else{
 			updatedTransaction={
