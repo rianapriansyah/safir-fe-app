@@ -1,7 +1,6 @@
 ﻿import { CarTransaction } from "../types/interfaceModels";
 
 export function calculateUsageDurationAndCost(carTransaction:CarTransaction): { totalCost: number; durationText: string } {
-  debugger;
 	const outDate = new Date(carTransaction.transaction.out);
   const inDate = new Date();
   const dailyRate = carTransaction.car.dailyRate;

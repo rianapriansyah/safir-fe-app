@@ -15,7 +15,7 @@ export async function addTransaction(transaction: Transaction) {
 			renter_name:transaction.renterName,
 			renter_phone:transaction.renterPhone,
 			rent_type:transaction.rentType,
-			in:transaction.in,
+			out:new Date(),
 			fuel_out:transaction.fuelOut,
 			fuel_in:transaction.fuelIn,
 			expected_payment:transaction.expectedPayment,
@@ -30,7 +30,7 @@ export async function addTransaction(transaction: Transaction) {
 
 export async function updateTransaction(id: number, transaction: Partial<Omit<Transaction, 'id'>>) {
 	const { data, error } = await supabase.from('transaction').update({
-		in:transaction.in,
+		in:new Date(),
 		fuel_in:transaction.fuelIn,
 		expected_payment:transaction.expectedPayment,
 		actual_payment:transaction.actualPayment,

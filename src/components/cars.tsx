@@ -1,10 +1,11 @@
-﻿import React from "react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
 import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCars, updateCar } from "../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
+import { calculateUsageDurationAndCost } from "../helper/durationCalculator";
 
 const emptyCar:Car={
 	id: 0,
@@ -73,7 +74,7 @@ const CarList: React.FC = () => {
 	};
 
 	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
-	 	// console.log(carTransaction);
+	 	 console.log(carTransaction);
 		try {
 			let message = "";
 			//update car ready status
@@ -81,7 +82,7 @@ const CarList: React.FC = () => {
 
 			if(carTransaction.transaction.id===0){
 				//create new transaction
-				await addTransaction(carTransaction.transaction);
+				 await addTransaction(carTransaction.transaction);
 			}
 			else{
 				//update transaction
@@ -125,7 +126,10 @@ const CarList: React.FC = () => {
 		let updatedTransaction:any;
 		if(!ready){
 			const data = await getLatestTransactionByVinAndCompletedStatus(car.vin, "false");
-			updatedTransaction=data;
+			updatedTransaction={
+				...data,
+				expectedPayment: calculateUsageDurationAndCost({car:car, transaction:data as Transaction}).totalCost
+			}
 		}
 		else{
 			updatedTransaction={

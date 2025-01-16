@@ -1,8 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
-import { format } from "date-fns";
-import { formatDistanceToNow  } from "date-fns";
+import { formatDistanceToNow, formatDuration, format } from "date-fns";
 import { id } from 'date-fns/locale'
 import { calculateUsageDurationAndCost } from '../helper/durationCalculator';
 
@@ -28,6 +27,7 @@ const CarRentalModal: React.FC<carModalProps> = ({
 
 	useEffect(() => {
 		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
+		console.log(carTransaction)
 	}, [carTransaction]);
 
 	const handleAction = async () => {
@@ -149,10 +149,9 @@ return (
 									id="actualPayment"
 									name="actualPayment"
 									label="Pembayaran Diterima"
-									type="number"
+									type="text"
 									fullWidth
 									variant="standard"
-									value={localCarTransaction.transaction.actualPayment}
 									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
 										...localCarTransaction.transaction, actualPayment:e.target.value
 									} })}
@@ -160,7 +159,7 @@ return (
 						</Stack>
 						<Stack>
 						<Typography variant="caption" gutterBottom>
-							Terhitung dari {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} {', '}
+							Terhitung dari {format(new Date(localCarTransaction.transaction.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })} {'/ '}
 							{formatDistanceToNow(localCarTransaction.transaction.out, {locale:id, addSuffix: true})}
 						</Typography>
 						<Typography variant="body1">
