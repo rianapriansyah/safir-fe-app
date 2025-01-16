@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
-import { formatDistanceToNow, formatDuration, format } from "date-fns";
+import { formatDistanceToNow, format } from "date-fns";
 import { id } from 'date-fns/locale'
 import { calculateUsageDurationAndCost } from '../helper/durationCalculator';
 
