@@ -31,6 +31,29 @@ export interface CarTransaction {
 	transaction:Transaction;
 }
 
+export interface VCarTransaction {
+	car_vin:string;
+  name:string;
+	dailyRate:number;
+	threeHourRate:number;
+	monthlyRate:number;
+	ready:boolean;
+	id: number;
+	vin:string;
+	car_name:string;
+	renter_name:string;
+	renter_phone:string
+  out:Date;
+	in:Date;
+	rent_type:string;
+	fuel_out:string;
+	fuel_in:string;
+	expected_payment:number;
+	actual_payment:number;
+	desc:string;
+	completed:boolean;
+}
+
 export enum Actions{
   Out = "Keluarkan Mobil",
   In = "Masukkan Mobil"

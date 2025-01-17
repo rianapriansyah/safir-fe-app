@@ -7,6 +7,12 @@ export async function getAllCars() {
   return data;
 }
 
+export async function getAllCarsWithLatestTransaction() {
+  const { data, error } = await supabase.from('v_latest_car_transactions').select('*');
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function getCarById(vin: string) {
   const { data, error } = await supabase.from('car').select('*').eq('vin', vin).single();
   if (error) throw new Error(error.message);

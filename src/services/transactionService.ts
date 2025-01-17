@@ -15,7 +15,6 @@ export async function addTransaction(transaction: Transaction) {
 			renter_name:transaction.renterName,
 			renter_phone:transaction.renterPhone,
 			rent_type:transaction.rentType,
-			out:new Date(),
 			fuel_out:transaction.fuelOut,
 			fuel_in:transaction.fuelIn,
 			expected_payment:transaction.expectedPayment,
@@ -41,11 +40,17 @@ export async function updateTransaction(id: number, transaction: Partial<Omit<Tr
 }
 
 export async function getAllTransactionsByVin(vin: string) {
-	const { data, error } = await supabase.from('transaction').select('*').eq('vin', vin);
+	const { data, error } = await supabase.from('transaction').select('*').eq('vin', vin).order('out', {ascending:false});
 	if (error) throw new Error(error.message);
 
 	// Map the raw data to the Transaction interface
 	return (data || []).map(mapToTransaction);
+}
+
+export async function getCountAllPaymentMadeByCar(vin: string) {
+	const { data, error } = await supabase.from('payment_summary_by_vin').select('*').eq('vin', vin).single();
+	if (error) throw new Error(error.message);
+	return data;
 }
 
 export async function getLatestTransactionByVinAndCompletedStatus(vin: string, completed:string) {

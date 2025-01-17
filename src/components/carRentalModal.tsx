@@ -27,7 +27,7 @@ const CarRentalModal: React.FC<carModalProps> = ({
 
 	useEffect(() => {
 		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
-		console.log(carTransaction)
+		// console.log(carTransaction);
 	}, [carTransaction]);
 
 	const handleAction = async () => {

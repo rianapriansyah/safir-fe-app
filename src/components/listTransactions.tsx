@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { Transaction } from '../types/interfaceModels';
 import { getAllCars } from '../services/carService';
-import { getAllTransactionsByVin } from '../services/transactionService';
+import { getAllTransactionsByVin, getCountAllPaymentMadeByCar } from '../services/transactionService';
 
 export interface Car {
   vin: string;
@@ -30,6 +30,7 @@ const ListTransactions: React.FC = () => {
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedVin, setSelectedVin] = useState<string>('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [paymentSummary, setPaymentSummary] = useState<any>();
 
   // Fetch car list on mount
   useEffect(() => {
@@ -50,8 +51,9 @@ const ListTransactions: React.FC = () => {
       const loadTransactions = async () => {
         try {
           const transactionData = await getAllTransactionsByVin(selectedVin);
-					console.log(transactionData);
           setTransactions(transactionData);
+          const paymentSummaryData = await getCountAllPaymentMadeByCar(selectedVin);
+          setPaymentSummary(paymentSummaryData)
         } catch (error) {
           console.error('Error fetching transactions:', error);
         }
@@ -102,11 +104,18 @@ const ListTransactions: React.FC = () => {
           ))}
         </Select>
       </FormControl>
+      <Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
+        Transaksi aktual tercatat {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format((paymentSummary?.adjusted_total_actual_payment))}
+      </Typography>
+      <Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
+        Fee Transaksi {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(paymentSummary?.transaction_fee)}
+      </Typography>
 			<Offset />
 			{/* <Stack direction={{ xs: 'column', md: 'row' }} spacing={{ xs: 1, md: 3 }}>
       <Gauge width={100} height={100} value={percentage / 100} />
       <Gauge width={100} height={100} value={60} startAngle={-90} endAngle={90} />
     	</Stack> */}
+      
       <TableContainer component={Paper}>
         <Table>
           <TableHead>

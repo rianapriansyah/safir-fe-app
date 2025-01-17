@@ -1,13 +1,23 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
-import { Box, Chip, Grid2 as Grid, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Chip, Grid2 as Grid, List, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { getAllCars, updateCar } from "../services/carService";
+import { getAllCars, getAllCarsWithLatestTransaction, updateCar } from "../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
 import { calculateUsageDurationAndCost } from "../helper/durationCalculator";
 
-const emptyCar:Car={
+import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
+import MuiAccordionSummary, {
+  AccordionSummaryProps,
+  accordionSummaryClasses,
+} from '@mui/material/AccordionSummary';
+import MuiAccordionDetails from '@mui/material/AccordionDetails';
+import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import { id } from "date-fns/locale";
+import { format } from "date-fns";
+
+const emptyCar:any={
 	id: 0,
 	vin: "",
 	name: "",
@@ -41,7 +51,7 @@ const emptyCarTransaction: CarTransaction = {
 };
 
 const CarList: React.FC = () => {
-	const [cars, setCars] = useState<Car[]>([]);
+	const [cars, setCars] = useState<any[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCarModalOpen, setCarModalState] = useState(false); // Product Modal state
@@ -50,6 +60,7 @@ const CarList: React.FC = () => {
 	const [openSnack, setOpenSnack] = React.useState(false);
 	const handleCloseSnack = () => setOpenSnack(false);
 	const [action, setAction] = useState<Actions>(Actions.Out);
+	const [expanded, setExpanded] = React.useState<string | false>('');
 
 	useEffect(() => {
 		const loadCars = async () => {
@@ -63,8 +74,8 @@ const CarList: React.FC = () => {
 
 	const handleFetchCars = async () => {
 		try {
-			const data = await getAllCars();
-			const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name))
+			const data = await getAllCarsWithLatestTransaction();
+			const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
 			setCars(sortedCar);
 		} catch (error) {
 			console.error('Error fetching products:', error);
@@ -101,26 +112,6 @@ const CarList: React.FC = () => {
 	};
 
 	if (loading) return <p>Loading...</p>;
-
-	const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
-
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
 
 	const openCarModal = async (car: Car, ready: boolean) => {
 		let updatedTransaction:any;
@@ -164,6 +155,50 @@ const CarList: React.FC = () => {
     setOpenSnack(true);
   };
 
+	
+	const Accordion = styled((props: AccordionProps) => (
+		<MuiAccordion disableGutters elevation={0} square {...props}  />
+	))(({ theme }) => ({
+		border: `1px solid ${theme.palette.divider}`,
+		'&:not(:last-child)': {
+			borderBottom: 0,
+		},
+		'&::before': {
+			display: 'none',
+		},
+	}));
+	
+	const AccordionSummary = styled((props: AccordionSummaryProps) => (
+		<MuiAccordionSummary 
+			expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
+			{...props}
+		/>
+	))(({ theme }) => ({
+		backgroundColor: 'rgba(0, 0, 0, .03)',
+		flexDirection: 'row-reverse',
+		[`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
+			{
+				transform: 'rotate(90deg)',
+			},
+		[`& .${accordionSummaryClasses.content}`]: {
+			marginLeft: theme.spacing(1),
+		},
+		...theme.applyStyles('dark', {
+			backgroundColor: 'rgba(255, 255, 255, .05)',
+		}),
+	}));
+	
+	const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
+		padding: theme.spacing(2),
+		borderTop: '1px solid rgba(0, 0, 0, .125)',
+		textAlign: "left"
+	}));
+
+  const handleChange =
+    (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
+      setExpanded(newExpanded ? panel : false);
+    };
+
 	return (
 		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>
 			<Grid container rowSpacing={1} spacing={{ xs: 2, md: 2 }} columns={{ xs: 1, sm: 1, md: 12 }}>
@@ -179,45 +214,36 @@ const CarList: React.FC = () => {
 							{cars.filter((car) => car.name.toLowerCase().includes(searchQuery.toLowerCase())).length}
 						</Typography>
 					</Stack>
-					<Box sx={{
-						mb: 2,
-						display: "flex",
-						flexDirection: "column",
-						height: "inherit"
-						// justifyContent="flex-end" # DO NOT USE THIS WITH 'scroll'
-						}}>
-						<TableContainer component={Paper}>
-							<Table size='small'>
-								<TableHead>
-									<TableRow>
-										<StyledTableCell>Mobil</StyledTableCell>
-										<StyledTableCell align="right">Status</StyledTableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-								{cars.filter((car) =>
+					<List>
+					{cars.filter((car) =>
 											car.vin.toLowerCase().includes(searchQuery.toLowerCase())
 										).map((car) => (
-									<StyledTableRow  key={car.id}>
-										<StyledTableCell>
-										{car.name} - {car.vin}
-										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-											{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(car.dailyRate)} / Hari
-										</Typography>
-										</StyledTableCell>
-										<StyledTableCell align="right">
-										<Chip
-											color={car.ready ? "success"  : "error" }
-											label={car.ready ? "Ready" : "Keluar"}
-											onClick={() => openCarModal(car, car.ready)}
-										/>
-										</StyledTableCell>
-									</StyledTableRow >
-									))}
-								</TableBody>
-							</Table>
-						</TableContainer>
-        	</Box>
+						<Accordion expanded={expanded === car.vin} onChange={handleChange(car.vin)} key={car.vin} >
+						<AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+							<Typography component="span" sx={{ width: '90%' }}>
+							{car.name} - {car.vin}
+							</Typography>
+							<Chip size="small"
+										color={car.ready ? "success"  : "error" }
+										label={car.ready ? "Ready" : "Keluar"}
+										onClick={() => openCarModal(car, car.ready)}
+									/>
+						</AccordionSummary>
+						<AccordionDetails>
+							<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
+								{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(car.dailyRate)} / Hari
+							</Typography>
+							<Typography component="span" sx={{ width: '90%' }}>
+								{car.completed ? 
+								`Pemakaian terakhir, ${format(new Date(car.in), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}` : 
+								`${car.renter_name}, ${format(new Date(car.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
+								}
+							</Typography>
+							
+						</AccordionDetails>
+						</Accordion>
+					))}
+					</List>
 					</Stack>
 				</Grid>
 				<Grid size={6}>
