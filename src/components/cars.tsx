@@ -1,9 +1,9 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
-import { Box, Chip, Grid2 as Grid, List, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { getAllCars, getAllCarsWithLatestTransaction, updateCar } from "../services/carService";
+import { getAllCarsWithLatestTransaction, updateCar } from "../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
 import { calculateUsageDurationAndCost } from "../helper/durationCalculator";
 
