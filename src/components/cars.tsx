@@ -85,11 +85,11 @@ const CarList: React.FC = () => {
 	};
 
 	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
-	 	 console.log(carTransaction);
+	 	//console.log(carTransaction);
 		try {
 			let message = "";
 			//update car ready status
-			await updateCar(carTransaction.car.vin, carTransaction.car);
+			await updateCar(carTransaction.car.vin, carTransaction.car.ready);
 
 			if(carTransaction.transaction.id===0){
 				//create new transaction
@@ -198,6 +198,11 @@ const CarList: React.FC = () => {
     (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
       setExpanded(newExpanded ? panel : false);
     };
+
+	// const getLatestTransaction = async (vin:string) => {
+	// 	const data = await getAllCarsWithLatestTransaction(vin);
+	// 	return data;
+	// };
 
 	return (
 		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>

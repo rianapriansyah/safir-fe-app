@@ -1,4 +1,3 @@
-import { Car } from '../types/interfaceModels';
 import supabase from '../utils/supabase'
 
 export async function getAllCars() {
@@ -8,7 +7,7 @@ export async function getAllCars() {
 }
 
 export async function getAllCarsWithLatestTransaction() {
-  const { data, error } = await supabase.from('v_latest_car_transactions').select('*');
+  const { data, error } = await supabase.from('v_latest_car_transactions').select('vin, name, in, out, completed, ready, dailyRate, renter_name');
   if (error) throw new Error(error.message);
   return data;
 }
@@ -19,8 +18,8 @@ export async function getCarById(vin: string) {
   return data;
 }
 
-export async function updateCar(vin: string, car: Partial<Omit<Car, 'vin'>>) {
-  const { data, error } = await supabase.from('car').update(car).eq('vin', vin);
+export async function updateCar(vin: string, ready:boolean) {
+  const { data, error } = await supabase.from('car').update({ready:ready}).eq('vin', vin);
   if (error) throw new Error(error.message);
   return data;
 }
