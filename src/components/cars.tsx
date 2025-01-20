@@ -199,11 +199,6 @@ const CarList: React.FC = () => {
       setExpanded(newExpanded ? panel : false);
     };
 
-	// const getLatestTransaction = async (vin:string) => {
-	// 	const data = await getAllCarsWithLatestTransaction(vin);
-	// 	return data;
-	// };
-
 	return (
 		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>
 			<Grid container rowSpacing={1} spacing={{ xs: 2, md: 2 }} columns={{ xs: 1, sm: 1, md: 12 }}>
@@ -220,9 +215,7 @@ const CarList: React.FC = () => {
 						</Typography>
 					</Stack>
 					<List>
-					{cars.filter((car) =>
-											car.vin.toLowerCase().includes(searchQuery.toLowerCase())
-										).map((car) => (
+					{cars.filter((car) => car.vin.toLowerCase().includes(searchQuery.toLowerCase())).map((car) => (
 						<Accordion expanded={expanded === car.vin} onChange={handleChange(car.vin)} key={car.vin} >
 						<AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
 							<Typography component="span" sx={{ width: '90%' }}>
@@ -259,8 +252,7 @@ const CarList: React.FC = () => {
 				carTransaction={selectedCarTransaction}
 				isModalOpen={isCarModalOpen} 
 				onCloseModal={() => closeCarModal()}	
-				onUpdateCarTransaction={handleUpdateCarTransaction} // Callback for saving product
-				// onDeleteCategory={handleDeleteCategory} // Callback for saving product
+				onUpdateCarTransaction={handleUpdateCarTransaction} 
 				action={action}
 			/>
 			<Snackbar

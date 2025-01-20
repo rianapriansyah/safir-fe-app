@@ -6,6 +6,7 @@ import CarList from './components/cars';
 import AppTheme from './theme/AppTheme';
 import MenuIcon from '@mui/icons-material/Menu';
 import ListTransactions from './components/listTransactions';
+import Dashboard from './components/dashboard';
 
 interface ListItemLinkProps {
   icon?: React.ReactElement<unknown>;
@@ -26,6 +27,14 @@ const menus  = [
     title: 'Transaksi Mobil',
     element: <ListTransactions />,
     path: '/transactions',
+    // icon: <PointOfSaleIcon />,
+    // permission: PERMISSIONS.TRANSACTIONS,
+    // roles: ['admin', 'cashier'], // Allowed roles
+  },
+  {
+    title: 'Dashboard',
+    element: <Dashboard />,
+    path: '/dashboard',
     // icon: <PointOfSaleIcon />,
     // permission: PERMISSIONS.TRANSACTIONS,
     // roles: ['admin', 'cashier'], // Allowed roles
@@ -83,9 +92,10 @@ const App: React.FC = () => {
       </Drawer>
       <Offset />
         <Routes>
-          <Route path="/cars" element={<CarList />} />
           <Route path="/" element={<CarList />} />
+          <Route path="/cars" element={<CarList />} />
           <Route path="/transactions" element={<ListTransactions />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
     </AppTheme>
