@@ -39,5 +39,7 @@ export function calculateUsageDurationAndCost(carTransaction:CarTransaction): { 
     }
   }
 
+  totalCost = totalCost - carTransaction.transaction.dp;
+
   return { totalCost, durationText };
 }

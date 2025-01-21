@@ -5,7 +5,6 @@ import { Box, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typ
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
-import { calculateUsageDurationAndCost } from "../helper/durationCalculator";
 
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
@@ -39,7 +38,7 @@ const emptyTransaction:Transaction={
 	rentType: Object.keys(RentType)[Object.values(RentType).indexOf(RentType.Daily)],
 	fuelOut:"",
 	fuelIn:"",
-	expectedPayment:0,
+	dp:0,
 	actualPayment:0,
 	desc:"",
 	completed:false
@@ -118,8 +117,7 @@ const CarList: React.FC = () => {
 		if(!ready){
 			const data = await getLatestTransactionByVinAndCompletedStatus(car.vin, "false");
 			updatedTransaction={
-				...data,
-				expectedPayment: calculateUsageDurationAndCost({car:car, transaction:data as Transaction}).totalCost
+				...data
 			}
 		}
 		else{
@@ -127,7 +125,6 @@ const CarList: React.FC = () => {
 				...emptyTransaction,
 				vin:car.vin,
 				name:car.name,
-				expectedPayment: car.dailyRate, // Set default expected payment to daily rate
 				out:new Date()
 			}
 		}

@@ -119,7 +119,8 @@ const ListTransactions: React.FC = () => {
 							<StyledTableCell>Keluar</StyledTableCell>
               <StyledTableCell>Masuk</StyledTableCell>
               <StyledTableCell>Nama Pemakai</StyledTableCell>
-              <StyledTableCell>Yang harus dibayar</StyledTableCell>
+              <StyledTableCell>DP</StyledTableCell>
+              <StyledTableCell>Diterima</StyledTableCell>
               <StyledTableCell>Dana Masuk</StyledTableCell>
               <StyledTableCell>Keterangan</StyledTableCell>
 							<StyledTableCell>Status</StyledTableCell>
@@ -130,7 +131,7 @@ const ListTransactions: React.FC = () => {
               <StyledTableRow key={transaction.id}>
 								<StyledTableCell>{new Intl.DateTimeFormat('id-ID', {dateStyle: 'full',timeZone: 'Asia/Makassar',}).format(new Date(transaction.out))}
 								<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-									{new Intl.DateTimeFormat('id-ID', {timeStyle: 'long', timeZone: 'Asia/Makassar',}).format(new Date(transaction.out))} 
+									{new Intl.DateTimeFormat('id-ID', {timeStyle: 'long', timeZone: 'Asia/Makassar'}).format(new Date(transaction.out))} 
 								</Typography>
 								</StyledTableCell>
 								
@@ -147,10 +148,13 @@ const ListTransactions: React.FC = () => {
 									</Typography>
 								</StyledTableCell>
                 <StyledTableCell>
-									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(transaction.expectedPayment)}
+									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(transaction.dp)}
 								</StyledTableCell>
                 <StyledTableCell>
 									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(transaction.actualPayment)}
+								</StyledTableCell>
+                <StyledTableCell>
+									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(transaction.dp + transaction.actualPayment)}
 								</StyledTableCell>
                 <StyledTableCell>{transaction.desc}</StyledTableCell>
 								<StyledTableCell>{transaction.completed? "Selesai":"Belum selesai"}</StyledTableCell>

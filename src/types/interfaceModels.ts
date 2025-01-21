@@ -20,7 +20,7 @@ export interface Transaction {
 	rentType:string;
 	fuelOut:string;
 	fuelIn:string;
-	expectedPayment:number;
+	dp:number;
 	actualPayment:number;
 	desc:string;
 	completed:boolean;
@@ -48,7 +48,7 @@ export interface VCarTransaction {
 	rent_type:string;
 	fuel_out:string;
 	fuel_in:string;
-	expected_payment:number;
+	dp:number;
 	actual_payment:number;
 	desc:string;
 	completed:boolean;
@@ -76,8 +76,40 @@ export interface RawTransactionData {
   rent_type: string;
   fuel_out?: string;
   fuel_in?: string;
-  expected_payment?: number;
+  dp?: number;
   actual_payment?: number;
   desc?: string;
 	completed:boolean;
+}
+
+export function generate12HourTimes(): { time: string }[] {
+	const times: { time: string, id:string }[] = [];
+	const now = new Date();
+	const currentHour = now.getHours(); // Get the current hour in 24-hour format
+	const currentMinutes = now.getMinutes(); // Get the current minutes
+	const extraHour = currentMinutes > 15 ? currentHour + 1 : null; // Include the next hour if > 15 minutes
+
+	for (let hour = 8; hour <= 23; hour++) {
+		if (hour <= currentHour || hour === extraHour) {
+			const formattedHour = (hour > 12 ? hour - 12 : hour).toString().padStart(2, '0'); // Convert 24-hour to 12-hour format
+			const suffix = hour >= 12 ? 'PM' : 'AM'; // Add AM/PM
+			times.push({ time: `${formattedHour} ${suffix}`, id:`${formattedHour}${suffix}` });
+		}
+	}
+	return times;
+}
+
+export function formatSavedTransactionOut(transactionOut: string | Date): string {
+	const date = typeof transactionOut === "string" ? new Date(transactionOut) : transactionOut;
+
+	// Extract hours and convert to 12-hour format
+	let hour = date.getHours();
+	const isPM = hour >= 12;
+	hour = hour % 12 || 12; // Convert 0 or 24 to 12
+
+	// Format the time
+	const formattedHour = hour.toString().padStart(2, '0');
+	const period = isPM ? "PM" : "AM";
+
+	return `${formattedHour} ${period}`;
 }

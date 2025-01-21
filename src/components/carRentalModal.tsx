@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Actions, CarTransaction, RentType } from "../types/interfaceModels";
+import { Actions, CarTransaction, formatSavedTransactionOut, generate12HourTimes } from "../types/interfaceModels";
 import { formatDistanceToNow, format } from "date-fns";
 import { id } from 'date-fns/locale'
 import { calculateUsageDurationAndCost } from '../helper/durationCalculator';
@@ -24,10 +24,13 @@ const CarRentalModal: React.FC<carModalProps> = ({
 }) => {
 
   const [localCarTransaction, setLocalCarTransaction] = useState<CarTransaction>(carTransaction); // Local state for the note
+  const [times, setTimes] = useState<any[]>([]); // Local state for the times
+	const [selectedTime, setSelectedTime] = useState("");
 
 	useEffect(() => {
 		setLocalCarTransaction(carTransaction); // Update localCar when the modal opens
-		// console.log(carTransaction);
+		setTimes(generate12HourTimes());
+		setSelectedTime(formatSavedTransactionOut(carTransaction.transaction.out));
 	}, [carTransaction]);
 
 	const handleAction = async () => {
@@ -35,14 +38,28 @@ const CarRentalModal: React.FC<carModalProps> = ({
 		onUpdateCarTransaction(localCarTransaction); // Call the save function passed from the parent
 	};
 
-	const handleChangeRentType = async (e: SelectChangeEvent<string>) => {
+	const handleChangeTime = async (e: SelectChangeEvent<string>) => {
+		const [time, period] = e.target.value.split(" "); // Split into hour and AM/PM
+    const hour = parseInt(time); // Extract the hour
+    const isPM = period === "PM";
+
+    const now = new Date(); // Get the current date
+    now.setSeconds(0); // Reset seconds
+    now.setMilliseconds(0); // Reset milliseconds
+
+    // Convert to 24-hour format and set the time
+    const adjustedHour = isPM && hour !== 12 ? hour + 12 : (!isPM && hour === 12 ? 0 : hour);
+    now.setHours(adjustedHour, 0, 0, 0); // Set the hour and reset minutes, seconds, and milliseconds
+
 		setLocalCarTransaction({
       ...localCarTransaction,
       transaction: {
         ...localCarTransaction.transaction,
-        rentType: e.target.value,
+        out: now,
       },
     })
+
+		setSelectedTime(e.target.value);
 	}
 
 return (
@@ -96,23 +113,6 @@ return (
 								/>
 							</Stack>
 						<Stack spacing={2} direction="row">
-							<FormControl fullWidth variant="standard">
-								<InputLabel id="rentType" autoFocus>Pemakaian</InputLabel>
-								<Select
-									disabled={action==Actions.In}
-									required
-									labelId="rentType"
-									id="rentType"
-									value={localCarTransaction.transaction.rentType}
-									onChange={handleChangeRentType}
-									>
-										{Object.entries(RentType).map(([key, value]) => (
-											<MenuItem key={key} value={key}>
-												{value}
-											</MenuItem>
-										))}
-								</Select>
-							</FormControl>
 							<TextField
 									disabled={action===Actions.In}
 									margin="dense"
@@ -142,7 +142,39 @@ return (
 									} })}
 								/>
 						</Stack>
+						<FormControl fullWidth variant="standard">
+							<InputLabel id="rentType" autoFocus>Keluar Jam</InputLabel>
+							<Select
+								disabled={action==Actions.In}
+								required
+								labelId="rentType"
+								id="rentType"
+								value={selectedTime}
+								onChange={handleChangeTime}
+								displayEmpty
+								>
+									{times.map((time) => (
+										<MenuItem key={time.id} value={time.time}>
+											{time.time} 
+										</MenuItem>
+									))}
+							</Select>
+						</FormControl>
 						<Stack spacing={2} direction="row">
+								<TextField
+									disabled={action===Actions.In}
+									margin="dense"
+									id="dp"
+									name="dp"
+									label="DP"
+									type="text"
+									fullWidth
+									variant="standard"
+									value={action===Actions.In ? new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(localCarTransaction.transaction.dp) : localCarTransaction.transaction.dp}
+									onChange={(e: { target: { value: any; }; }) => setLocalCarTransaction({ ...localCarTransaction, transaction:{
+										...localCarTransaction.transaction, dp:e.target.value
+									} })}
+								/>
 								<TextField
 									disabled={action===Actions.Out}
 									margin="dense"

@@ -15,9 +15,10 @@ export async function addTransaction(transaction: Transaction) {
 			renter_name:transaction.renterName,
 			renter_phone:transaction.renterPhone,
 			rent_type:transaction.rentType,
+			out:transaction.out,
 			fuel_out:transaction.fuelOut,
 			fuel_in:transaction.fuelIn,
-			expected_payment:transaction.expectedPayment,
+			dp:transaction.dp,
 			actual_payment:transaction.actualPayment,
 			desc:transaction.desc,
 			completed:transaction.completed
@@ -31,7 +32,7 @@ export async function updateTransaction(id: number, transaction: Partial<Omit<Tr
 	const { data, error } = await supabase.from('transaction').update({
 		in:new Date(),
 		fuel_in:transaction.fuelIn,
-		expected_payment:transaction.expectedPayment,
+		dp:transaction.dp,
 		actual_payment:transaction.actualPayment,
 		completed:transaction.completed
 	}).eq('id', id);
@@ -83,7 +84,7 @@ function mapToTransaction(rawData: RawTransactionData): Transaction {
     rentType: rawData.rent_type || '',
     fuelOut: rawData.fuel_out || '',
     fuelIn: rawData.fuel_in || '',
-    expectedPayment: rawData.expected_payment || 0,
+    dp: rawData.dp || 0,
     actualPayment: rawData.actual_payment || 0,
     desc: rawData.desc || '',
 		completed:rawData.completed||false
