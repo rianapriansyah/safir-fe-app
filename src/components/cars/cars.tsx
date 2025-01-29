@@ -1,10 +1,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { Actions, Car, CarTransaction, RentType, Transaction } from "../types/interfaceModels";
+import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
 import { Box, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
-import { getAllCarsWithLatestTransaction, updateCar } from "../services/carService";
-import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../services/transactionService";
+import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
+import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
 
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {

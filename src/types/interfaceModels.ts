@@ -1,3 +1,12 @@
+export interface Expense {
+	id: number;
+	vin:string;
+	desc:boolean;
+  shop_name:string;
+	amount:number;
+	created_at:Date;
+}
+
 export interface Car {
 	id: number;
 	vin:string;
@@ -53,6 +62,8 @@ export interface VCarTransaction {
 	desc:string;
 	completed:boolean;
 }
+
+
 
 export enum Actions{
   Out = "Keluarkan Mobil",

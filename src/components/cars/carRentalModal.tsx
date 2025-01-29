@@ -1,9 +1,9 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Actions, CarTransaction, formatSavedTransactionOut, generate12HourTimes } from "../types/interfaceModels";
+import { Actions, CarTransaction, formatSavedTransactionOut, generate12HourTimes } from "../../types/interfaceModels";
 import { formatDistanceToNow, format } from "date-fns";
 import { id } from 'date-fns/locale'
-import { calculateUsageDurationAndCost } from '../helper/durationCalculator';
+import { calculateUsageDurationAndCost } from '../../helper/durationCalculator';
 
 interface carModalProps {
 	carTransaction:CarTransaction;

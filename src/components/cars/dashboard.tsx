@@ -1,6 +1,6 @@
 import { Grid2 as Grid, List, ListItem, ListItemText, styled, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { getCarsWithIncomeByType, getSumActualIncomeByCarType } from '../services/dashboardService';
+import { getCarsWithIncomeByType, getSumActualIncomeByCarType } from '../../services/dashboardService';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
   AccordionSummaryProps,

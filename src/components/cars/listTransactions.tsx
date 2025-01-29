@@ -16,9 +16,9 @@ import {
 	TableRow,
 	Typography,
 } from '@mui/material';
-import { Transaction } from '../types/interfaceModels';
-import { getAllCars } from '../services/carService';
-import { getAllTransactionsByVin, getCountAllPaymentMadeByCar } from '../services/transactionService';
+import { Transaction } from '../../types/interfaceModels';
+import { getAllCars } from '../../services/carService';
+import { getAllTransactionsByVin, getCountAllPaymentMadeByCar } from '../../services/transactionService';
 
 export interface Car {
   vin: string;

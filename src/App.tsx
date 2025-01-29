@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css'
 import { AppBar, Box, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, styled, Toolbar } from '@mui/material';
-import CarList from './components/cars';
+import CarList from './components/cars/cars';
 import AppTheme from './theme/AppTheme';
 import MenuIcon from '@mui/icons-material/Menu';
-import ListTransactions from './components/listTransactions';
-import Dashboard from './components/dashboard';
+import ListTransactions from './components/cars/listTransactions';
+import Dashboard from './components/cars/dashboard';
+import Expenses from './components/expenses/expenses';
 
 interface ListItemLinkProps {
   icon?: React.ReactElement<unknown>;
@@ -35,6 +36,14 @@ const menus  = [
     title: 'Dashboard',
     element: <Dashboard />,
     path: '/dashboard',
+    // icon: <PointOfSaleIcon />,
+    // permission: PERMISSIONS.TRANSACTIONS,
+    // roles: ['admin', 'cashier'], // Allowed roles
+  },
+  {
+    title: 'Expenses',
+    element: <Expenses />,
+    path: '/expenses',
     // icon: <PointOfSaleIcon />,
     // permission: PERMISSIONS.TRANSACTIONS,
     // roles: ['admin', 'cashier'], // Allowed roles
@@ -96,6 +105,7 @@ const App: React.FC = () => {
           <Route path="/cars" element={<CarList />} />
           <Route path="/transactions" element={<ListTransactions />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/expenses" element={<Expenses />} />
         </Routes>
       </Router>
     </AppTheme>
