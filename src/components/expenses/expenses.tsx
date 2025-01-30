@@ -47,16 +47,15 @@ const Expenses: React.FC = () => {
 
   // Fetch transactions when a car is selected
   useEffect(() => {
-    if (selectedVin) {
-      fetchExpenses();
-    }
-  }, [selectedVin]);
+    fetchExpenses();
+  }, []);
 
   const fetchExpenses = async () => {
     let isFetching = false;
 		if (isFetching) return; // Prevent fetch if already in progress
 		isFetching = true;
-		const expenseData = await getAllExpensesByVin(selectedVin);
+		const expenseData = await getAllExpensesByVin();
+    console.log(expenseData);
     setExpenses(expenseData);
 		isFetching = false;
 	};
@@ -111,10 +110,10 @@ const Expenses: React.FC = () => {
             <StyledTableRow>
 							<StyledTableCell>Id</StyledTableCell>
               <StyledTableCell>Tanggal</StyledTableCell>
-              <StyledTableCell>Plat</StyledTableCell>
-              <StyledTableCell>Nama Toko</StyledTableCell>
-              <StyledTableCell>Pengeluaran</StyledTableCell>
               <StyledTableCell>Keterangan</StyledTableCell>
+              <StyledTableCell>Kategori</StyledTableCell>
+              <StyledTableCell>Pengeluaran</StyledTableCell>
+              <StyledTableCell>Biaya Oleh</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -122,21 +121,19 @@ const Expenses: React.FC = () => {
               <StyledTableRow key={expense.id}>
 								<StyledTableCell>{expense.id} 
 								</StyledTableCell>
-								
                 <StyledTableCell>
 									{new Intl.DateTimeFormat('id-ID', {dateStyle: 'full',timeZone: 'Asia/Makassar',}).format(new Date(expense.created_at))}
 									<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
 									{new Intl.DateTimeFormat('id-ID', {timeStyle: 'long', timeZone: 'Asia/Makassar',}).format(new Date(expense.created_at))}
 									</Typography>
                 </StyledTableCell>
-                <StyledTableCell>{expense.vin}
-								</StyledTableCell>
-                <StyledTableCell>{expense.shop_name}
+                <StyledTableCell>{expense.description}</StyledTableCell>
+                <StyledTableCell>{expense.category}
 								</StyledTableCell>
                 <StyledTableCell>
 									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(expense.amount)}
 								</StyledTableCell>
-                <StyledTableCell>{expense.desc}</StyledTableCell>
+                <StyledTableCell>{expense.car_specific? "Mobil" : "Rental"}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

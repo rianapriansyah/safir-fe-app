@@ -7,7 +7,7 @@ export async function getAllCars() {
 }
 
 export async function getAllCarsWithLatestTransaction() {
-  const { data, error } = await supabase.from('v_latest_car_transactions').select('vin, name, in, out, completed, ready, dailyRate, renter_name');
+  const { data, error } = await supabase.from('v_latest_car_transactions').select('*');
   if (error) throw new Error(error.message);
   return data;
 }

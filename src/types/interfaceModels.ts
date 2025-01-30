@@ -1,10 +1,11 @@
 export interface Expense {
 	id: number;
 	vin:string;
-	desc:boolean;
-  shop_name:string;
+	description:boolean;
+  category:string;
 	amount:number;
 	created_at:Date;
+	car_specific:boolean;
 }
 
 export interface Car {

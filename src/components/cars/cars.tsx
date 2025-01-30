@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
-import { Box, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid2 as Grid, Link, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
@@ -60,6 +60,7 @@ const CarList: React.FC = () => {
 	const handleCloseSnack = () => setOpenSnack(false);
 	const [action, setAction] = useState<Actions>(Actions.Out);
 	const [expanded, setExpanded] = React.useState<string | false>('');
+	const Offset = styled('br')(({ theme }) => theme.mixins.toolbar);
 
 	useEffect(() => {
 		const loadCars = async () => {
@@ -72,15 +73,13 @@ const CarList: React.FC = () => {
 	}, []);
 
 	const handleFetchCars = async () => {
-		try {
-			const data = await getAllCarsWithLatestTransaction();
-			const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
-			setCars(sortedCar);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-			triggerSnack('Kesalahan dalam mengambil data mobil');
-			alert(error);
-		}
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getAllCarsWithLatestTransaction();
+		const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
+		setCars(sortedCar);
+		isFetching = false;
 	};
 
 	const handleUpdateCarTransaction = async (carTransaction: CarTransaction) => {
@@ -196,6 +195,18 @@ const CarList: React.FC = () => {
       setExpanded(newExpanded ? panel : false);
     };
 
+	const formatWhatsAppLink = (number: string) => {
+		const cleanedNumber = number.replace(/[^0-9]/g, "");
+		if (cleanedNumber.startsWith("0")) {
+			return `https://wa.me/62${cleanedNumber.slice(1)}`;
+		}
+	};
+
+	const openWhatsApp = (number: string) => {
+    const waLink = formatWhatsAppLink(number);
+    window.open(waLink, "_blank");
+  };
+
 	return (
 		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>
 			<Grid container rowSpacing={1} spacing={{ xs: 2, md: 2 }} columns={{ xs: 1, sm: 1, md: 12 }}>
@@ -231,10 +242,15 @@ const CarList: React.FC = () => {
 							<Typography component="span" sx={{ width: '90%' }}>
 								{car.completed ? 
 								`Pemakaian terakhir, ${format(new Date(car.in), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}` : 
-								`${car.renter_name}, ${format(new Date(car.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
+								`${car.renter_name}, ${car.renter_name} ${format(new Date(car.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
 								}
 							</Typography>
-							
+							<Offset />
+							{!car.completed && car.renter_phone !== "" && (
+								<Button variant="outlined" onClick={() => openWhatsApp(car.renter_phone)}>
+									Hubungi Pemakai
+								</Button>
+							)}
 						</AccordionDetails>
 						</Accordion>
 					))}
