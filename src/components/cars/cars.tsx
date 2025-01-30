@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
-import { Box, Button, Chip, Grid2 as Grid, Link, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
