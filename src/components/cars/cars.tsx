@@ -18,6 +18,8 @@ import { format } from "date-fns";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { calculateUsageDurationAndCost } from "../../helper/durationCalculator";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import QrCodeIcon from '@mui/icons-material/QrCode';
 
 const emptyCar:any={
 	id: 0,
@@ -204,6 +206,10 @@ const CarList: React.FC = () => {
     window.open(waLink, "_blank");
   };
 
+	const openQR = (url: string) => {
+    window.open(url, "_blank");
+  };
+
 	function Row(props: { row: any }) {
 		const { row } = props;
 		const [open, setOpen] = React.useState(false);
@@ -222,6 +228,9 @@ const CarList: React.FC = () => {
 					</TableCell>
 					<TableCell component="th" scope="row">
 						{row.name} - {row.vin}
+						<IconButton onClick={()=>window.open(row.qr_link, "_blank")}>
+							<QrCodeIcon  /> 
+						</IconButton>
 					</TableCell>
 					<TableCell align="right">
 					<Chip size="small"
@@ -255,7 +264,14 @@ const CarList: React.FC = () => {
 										`${format(new Date(row.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
 										}
 										</TableCell>
-										<TableCell>{row.completed ? `-` : row.renter_name}</TableCell>
+										<TableCell>{row.completed ? `-` : row.renter_name}
+
+										{!row.completed && row.renter_phone !== "" && (
+											<IconButton onClick={() => openWhatsApp(row.renter_phone)}>
+												<WhatsAppIcon /> 
+											</IconButton>
+										)}
+										</TableCell>
 										<TableCell align="right">
 										{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(row.dailyRate)}
 										</TableCell>

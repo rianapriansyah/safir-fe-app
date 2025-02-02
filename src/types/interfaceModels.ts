@@ -17,6 +17,7 @@ export interface Car {
 	threeHourRate:number;
 	monthlyRate:number;
 	ready:boolean;
+	qr_link:string;
 }
 
 export interface Transaction {
