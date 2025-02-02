@@ -206,10 +206,6 @@ const CarList: React.FC = () => {
     window.open(waLink, "_blank");
   };
 
-	const openQR = (url: string) => {
-    window.open(url, "_blank");
-  };
-
 	function Row(props: { row: any }) {
 		const { row } = props;
 		const [open, setOpen] = React.useState(false);
