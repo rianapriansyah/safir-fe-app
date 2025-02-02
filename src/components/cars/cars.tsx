@@ -1,18 +1,10 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
-import { Box, Button, Chip, Collapse, Grid2 as Grid, IconButton, List, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Chip, Collapse, Grid2 as Grid, IconButton, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
-
-import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
-import MuiAccordionSummary, {
-  AccordionSummaryProps,
-  accordionSummaryClasses,
-} from '@mui/material/AccordionSummary';
-import MuiAccordionDetails from '@mui/material/AccordionDetails';
-import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { id } from "date-fns/locale";
 import { format } from "date-fns";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -64,8 +56,6 @@ const CarList: React.FC = () => {
 	const [openSnack, setOpenSnack] = React.useState(false);
 	const handleCloseSnack = () => setOpenSnack(false);
 	const [action, setAction] = useState<Actions>(Actions.Out);
-	const [expanded, setExpanded] = React.useState<string | false>('');
-	const Offset = styled('br')(({ theme }) => theme.mixins.toolbar);
 
 	useEffect(() => {
 		handleFetchCars();
@@ -149,50 +139,6 @@ const CarList: React.FC = () => {
     setMessage(msg);
     setOpenSnack(true);
   };
-
-	
-	const Accordion = styled((props: AccordionProps) => (
-		<MuiAccordion disableGutters elevation={0} square {...props}  />
-	))(({ theme }) => ({
-		border: `1px solid ${theme.palette.divider}`,
-		'&:not(:last-child)': {
-			borderBottom: 0,
-		},
-		'&::before': {
-			display: 'none',
-		},
-	}));
-	
-	const AccordionSummary = styled((props: AccordionSummaryProps) => (
-		<MuiAccordionSummary 
-			expandIcon={<ArrowForwardIosSharpIcon sx={{ fontSize: '0.9rem' }} />}
-			{...props}
-		/>
-	))(({ theme }) => ({
-		backgroundColor: 'rgba(0, 0, 0, .03)',
-		flexDirection: 'row-reverse',
-		[`& .${accordionSummaryClasses.expandIconWrapper}.${accordionSummaryClasses.expanded}`]:
-			{
-				transform: 'rotate(90deg)',
-			},
-		[`& .${accordionSummaryClasses.content}`]: {
-			marginLeft: theme.spacing(1),
-		},
-		...theme.applyStyles('dark', {
-			backgroundColor: 'rgba(255, 255, 255, .05)',
-		}),
-	}));
-	
-	const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-		padding: theme.spacing(2),
-		borderTop: '1px solid rgba(0, 0, 0, .125)',
-		textAlign: "left"
-	}));
-
-  const handleChange =
-    (panel: string) => (_event: React.SyntheticEvent, newExpanded: boolean) => {
-      setExpanded(newExpanded ? panel : false);
-    };
 
 	const formatWhatsAppLink = (number: string) => {
 		const cleanedNumber = number.replace(/[^0-9]/g, "");
@@ -318,42 +264,7 @@ const CarList: React.FC = () => {
 						</TableBody>
 						</Table>
 					</TableContainer>
-					<List>
-					{cars.filter((car) => car.vin.toLowerCase().includes(searchQuery.toLowerCase())).map((car) => (
-						<Accordion expanded={expanded === car.vin} onChange={handleChange(car.vin)} key={car.vin} >
-						<AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
-							<Typography component="span" sx={{ width: '90%' }}>
-							{car.name} - {car.vin}
-							</Typography>
-							<Chip size="small"
-										color={car.ready ? "success"  : "error" }
-										label={car.ready ? "Ready" : "Keluar"}
-										onClick={() => openCarModal(car, car.ready)}
-									/>
-						</AccordionSummary>
-						<AccordionDetails>
-							<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-								{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(car.dailyRate)} / Hari
-							</Typography>
-							<Typography component="span" sx={{ width: '90%' }}>
-								{car.completed ? 
-								`Pemakaian terakhir, ${format(new Date(car.in), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}` : 
-								`${car.renter_name}, ${car.renter_name} ${format(new Date(car.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
-								}
-							</Typography>
-							<Offset />
-							{!car.completed && car.renter_phone !== "" && (
-								<Button variant="outlined" onClick={() => openWhatsApp(car.renter_phone)}>
-									Hubungi Pemakai
-								</Button>
-							)}
-						</AccordionDetails>
-						</Accordion>
-					))}
-					</List>
 					</Stack>
-				</Grid>
-				<Grid size={6}>
 				</Grid>
 			</Grid>
 			
