@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
-import { Box, Button, Chip, Grid2 as Grid, List, Snackbar, Stack, styled, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Collapse, Grid2 as Grid, IconButton, List, Paper, Snackbar, Stack, styled, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
@@ -15,6 +15,9 @@ import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
 import { id } from "date-fns/locale";
 import { format } from "date-fns";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { calculateUsageDurationAndCost } from "../../helper/durationCalculator";
 
 const emptyCar:any={
 	id: 0,
@@ -51,7 +54,7 @@ const emptyCarTransaction: CarTransaction = {
 
 const CarList: React.FC = () => {
 	const [cars, setCars] = useState<any[]>([]);
-	const [loading, setLoading] = useState(false);
+	const [loading, _setLoading] = useState(false);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [isCarModalOpen, setCarModalState] = useState(false); // Product Modal state
 	const [selectedCarTransaction, setCarTransaction] = useState<CarTransaction>(emptyCarTransaction);
@@ -63,13 +66,8 @@ const CarList: React.FC = () => {
 	const Offset = styled('br')(({ theme }) => theme.mixins.toolbar);
 
 	useEffect(() => {
-		const loadCars = async () => {
-			setLoading(true);
-			handleFetchCars();
-			setCarTransaction(emptyCarTransaction);
-			setLoading(false);
-		};
-		loadCars();
+		handleFetchCars();
+		setCarTransaction(emptyCarTransaction);
 	}, []);
 
 	const handleFetchCars = async () => {
@@ -78,6 +76,7 @@ const CarList: React.FC = () => {
 		isFetching = true;
 		const data = await getAllCarsWithLatestTransaction();
 		const sortedCar = data.sort((a: { name: string; }, b: { name: string; }) => a.name.localeCompare(b.name));
+		console.log(sortedCar);
 		setCars(sortedCar);
 		isFetching = false;
 	};
@@ -86,9 +85,7 @@ const CarList: React.FC = () => {
 	 	//console.log(carTransaction);
 		try {
 			let message = "";
-			//update car ready status
 			await updateCar(carTransaction.car.vin, carTransaction.car.ready);
-
 			if(carTransaction.transaction.id===0){
 				//create new transaction
 				 await addTransaction(carTransaction.transaction);
@@ -207,6 +204,78 @@ const CarList: React.FC = () => {
     window.open(waLink, "_blank");
   };
 
+	function Row(props: { row: any }) {
+		const { row } = props;
+		const [open, setOpen] = React.useState(false);
+	
+		return (
+			<React.Fragment>
+				<TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+					<TableCell>
+						<IconButton
+							aria-label="expand row"
+							size="small"
+							onClick={() => setOpen(!open)}
+						>
+							{open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+						</IconButton>
+					</TableCell>
+					<TableCell component="th" scope="row">
+						{row.name} - {row.vin}
+					</TableCell>
+					<TableCell align="right">
+					<Chip size="small"
+										color={row.ready ? "success"  : "error" }
+										label={row.ready ? "Ready" : "Keluar"}
+										onClick={() => openCarModal(row, row.ready)}
+									/>
+					</TableCell>
+				</TableRow>
+				<TableRow>
+					<TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+						<Collapse in={open} timeout="auto" unmountOnExit>
+							<Box sx={{ margin: 1 }}>
+								<Typography variant="h6" gutterBottom component="div">
+									Info Pemakaian
+								</Typography>
+								<Table size="small" aria-label="purchases">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Tanggal Pengambilan</TableCell>
+                    <TableCell>Pemakai</TableCell>
+                    <TableCell align="right">Tarif Perhari</TableCell>
+                    <TableCell align="right">Tagihan Berjalan</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+									<TableRow key="1">
+										<TableCell component="th" scope="row">
+										{row.completed ? 
+										`Pemakaian terakhir, ${format(new Date(row.in), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}` : 
+										`${format(new Date(row.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
+										}
+										</TableCell>
+										<TableCell>{row.completed ? `-` : row.renter_name}</TableCell>
+										<TableCell align="right">
+										{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(row.dailyRate)}
+										</TableCell>
+										<TableCell align="right">
+											{row.completed ? 
+											`-` : 
+											`${new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(calculateUsageDurationAndCost(row, row).totalCost)}`
+											}
+										</TableCell>
+                    </TableRow>
+                </TableBody>
+              </Table>
+							</Box>
+						</Collapse>
+					</TableCell>
+				</TableRow>
+			</React.Fragment>
+		);
+	}
+
 	return (
 		<Box component="section" sx={{ flexGrow:1, p: 1,borderRadius:"10px" }}>
 			<Grid container rowSpacing={1} spacing={{ xs: 2, md: 2 }} columns={{ xs: 1, sm: 1, md: 12 }}>
@@ -215,13 +284,28 @@ const CarList: React.FC = () => {
 					<Typography variant="h4" gutterBottom>
 							Daftar Mobil
 					</Typography>
-					{/* <Button onClick={()=>{openProductModal(emptyProduct, Actions.Add);}} variant="contained">Tambah Produk Baru</Button> */}
 					<TextField id="outlined-basic" label="Search products..." variant="outlined" onChange={(e) => setSearchQuery(e.target.value)}/>
 					<Stack direction={"row"} spacing={2}>
 						<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Total Mobil :{' '}
 							{cars.filter((car) => car.name.toLowerCase().includes(searchQuery.toLowerCase())).length}
 						</Typography>
 					</Stack>
+					<TableContainer component={Paper}>
+						<Table aria-label="collapsible table">
+							<TableHead>
+								<TableRow>
+									<TableCell width={'1%'}/>
+									<TableCell align="left">Mobil</TableCell>
+									<TableCell align="right">Status</TableCell>
+								</TableRow>
+						</TableHead>
+						<TableBody>
+							{cars.filter((car) => car.vin.toLowerCase().includes(searchQuery.toLowerCase())).map((car) => (
+								<Row key={car.vin} row={car} />
+							))}
+						</TableBody>
+						</Table>
+					</TableContainer>
 					<List>
 					{cars.filter((car) => car.vin.toLowerCase().includes(searchQuery.toLowerCase())).map((car) => (
 						<Accordion expanded={expanded === car.vin} onChange={handleChange(car.vin)} key={car.vin} >

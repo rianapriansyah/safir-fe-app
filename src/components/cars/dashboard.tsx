@@ -1,4 +1,4 @@
-import { Grid2 as Grid, List, ListItem, ListItemText, styled, Typography  } from '@mui/material';
+import { Card, CardActions, CardContent, Grid2 as Grid, List, ListItem, ListItemText, Stack, styled, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { getCarsWithIncomeByType, getSumActualIncomeByCarType } from '../../services/dashboardService';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
@@ -8,6 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
+import { getSumOfExpenseByRental } from '../../services/expenseService';
 
 
 const Dashboard: React.FC = () => {
@@ -17,48 +18,60 @@ const Dashboard: React.FC = () => {
 	const [expanded, setExpanded] = React.useState<string | false>('');
 	const [internalCars, setInternalCars] = useState<any[]>([]);
 	const [externalCars, setExternalCars] = useState<any[]>([]);
+	const [expense, setExpense] = useState<any>(0);
 
 	useEffect(() => {
 		fetchIntCarIncome();
 		fetchExtCarIncome();
 		fetchInternalCars();
 		fetchExternalCars();
+		fetchTotalExpenses();
 	}, []);
 
 	const fetchIntCarIncome = async () => {
-		try {
-			const data = await getSumActualIncomeByCarType(true);
-			setInternalCarsIncome(data);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-		}
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getSumActualIncomeByCarType(true);
+		setInternalCarsIncome(data);
+		isFetching = false;
 	};
 
 	const fetchExtCarIncome = async () => {
-		try {
-			const data = await getSumActualIncomeByCarType(false);
-			setExtCarIncome(data);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-		}
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getSumActualIncomeByCarType(false);
+		setExtCarIncome(data);
+		isFetching = false;
 	};
 
 	const fetchInternalCars = async () => {
-		try {
-			const data = await getCarsWithIncomeByType(true);
-			setInternalCars(data);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-		}
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getCarsWithIncomeByType(true);
+		setInternalCars(data);
+		isFetching = false;
 	};
 
 	const fetchExternalCars = async () => {
-		try {
-			const data = await getCarsWithIncomeByType(false);
-			setExternalCars(data);
-		} catch (error) {
-			console.error('Error fetching products:', error);
-		}
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getCarsWithIncomeByType(false);
+		setExternalCars(data);
+		isFetching = false;
+	};
+
+	const fetchTotalExpenses = async () => {
+		let isFetching = false;
+		if (isFetching) return; // Prevent fetch if already in progress
+		isFetching = true;
+		const data = await getSumOfExpenseByRental();
+		console.log(data);
+		setExpense(data);
+		isFetching = false;
 	};
 
 	const carType=[
@@ -66,14 +79,14 @@ const Dashboard: React.FC = () => {
 			id:"1",
 			type:"internal",
 			title:"Pemasukan Mobil Internal",
-			income: new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(intCarIncome.total_income),
+			income: new Intl.NumberFormat('id-ID').format(intCarIncome.total_income),
 			cars:internalCars
 		},
 		{
 			id:"2",
 			type:"external",
 			title:"Pemasukan Mobil Eksternal",
-			income: new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(extCarIncome.total_income),
+			income: new Intl.NumberFormat('id-ID').format(extCarIncome.total_income),
 			cars:externalCars
 		}
 	];
@@ -120,8 +133,59 @@ const Dashboard: React.FC = () => {
 		textAlign: "left"
 	}));
 
+	
+
 return (
-   <Grid>
+   <Grid >
+		 <Stack direction={'row'} spacing={2}>
+			<Card sx={{
+				height: '100%'}}>
+				<CardContent>
+					<Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+						{`Gross Pemasukan Mobil Internal`}
+					</Typography>
+					
+					<span>
+					<Typography sx={{ color: 'text.secondary', mb: 1.5 }}>IDR
+					</Typography>
+					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(intCarIncome.total_income)}</Typography>
+					</span>		
+					
+				</CardContent>
+				<CardActions>
+				</CardActions>
+			</Card>
+			<Card sx={{
+				height: '100%'}}>
+				<CardContent>
+					<Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+						{`Total Pengeluaran`}
+					</Typography>
+					<span>
+					<Typography sx={{ color: 'text.secondary', mb: 1.5 }}>IDR
+					</Typography>
+					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(expense.total_expense)}</Typography>
+					</span>		
+				</CardContent>
+				<CardActions>
+				</CardActions>
+			</Card>
+			<Card sx={{
+				height: '100%'}}>
+				<CardContent>
+					<Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+						{`Nett`}
+					</Typography>
+					<span>
+					<Typography sx={{ color: 'text.secondary', mb: 1.5 }}>IDR
+					</Typography>
+					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(intCarIncome.total_income - expense.total_expense)}</Typography>
+					</span>		
+				</CardContent>
+				<CardActions>
+				</CardActions>
+			</Card>
+		 </Stack>
 		<List>
 			{carType.map((type) => (
 				<Accordion expanded={expanded === type.id} onChange={handleChange(type.id)} key={type.id} >

@@ -5,3 +5,9 @@ export async function getAllExpensesByVin() {
   if (error) throw new Error(error.message);
   return data;
 }
+
+export async function getSumOfExpenseByRental() {
+  const { data, error } = await supabase.from('total_general_expenses').select('*').single();
+  if (error) throw new Error(error.message);
+  return data;
+}

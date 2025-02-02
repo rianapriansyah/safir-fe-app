@@ -55,7 +55,6 @@ const Expenses: React.FC = () => {
 		if (isFetching) return; // Prevent fetch if already in progress
 		isFetching = true;
 		const expenseData = await getAllExpensesByVin();
-    console.log(expenseData);
     setExpenses(expenseData);
 		isFetching = false;
 	};

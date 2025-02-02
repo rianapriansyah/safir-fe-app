@@ -196,7 +196,7 @@ return (
 						</Typography>
 						<Typography variant="body1">
 							Tagihan {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(
-								calculateUsageDurationAndCost(localCarTransaction).totalCost
+								calculateUsageDurationAndCost(localCarTransaction.car, localCarTransaction.transaction).totalCost
 								)}
 						</Typography>
 						</Stack>

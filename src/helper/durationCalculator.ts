@@ -1,17 +1,18 @@
-﻿import { CarTransaction } from "../types/interfaceModels";
+﻿import { Car, Transaction } from "../types/interfaceModels";
 
-export function calculateUsageDurationAndCost(carTransaction:CarTransaction): { totalCost: number; durationText: string } {
-	const outDate = new Date(carTransaction.transaction.out);
+export function calculateUsageDurationAndCost(car:Car, transaction:Transaction): { totalCost: number; durationText: string } {
+  debugger;
+	const outDate = new Date(transaction.out);
   const inDate = new Date();
-  const dailyRate = carTransaction.car.dailyRate;
-  const threeHourRate = carTransaction.car.threeHourRate;
+  const dailyRate = car.dailyRate;
+  const threeHourRate = car.threeHourRate;
   const lateChargeRate = 25000;
   const diffInMs = inDate.getTime() - outDate.getTime();
   const totalHours = Math.ceil(diffInMs / (1000 * 60 * 60)); // Total hours, rounded up
   let totalCost = 0;
   let durationText = "";
 
-  if (carTransaction.transaction.rentType === "Daily" && totalHours <= 4) {
+  if (transaction.rentType === "Daily" && totalHours <= 4) {
     // Rule 6: If rent type is daily and duration is < 4 hours, count as daily
     totalCost = dailyRate;
     durationText = `1 hari (Daily rate applied)`;
@@ -39,7 +40,7 @@ export function calculateUsageDurationAndCost(carTransaction:CarTransaction): { 
     }
   }
 
-  totalCost = totalCost - carTransaction.transaction.dp;
+  totalCost = totalCost - transaction.dp;
 
   return { totalCost, durationText };
 }
