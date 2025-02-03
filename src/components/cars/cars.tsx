@@ -208,26 +208,23 @@ const CarList: React.FC = () => {
 										}
 										</TableCell>
 									</TableRow>
-									<TableRow key="2">
-										<TableCell>
-										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemakai</Typography>
-										{row.completed ? `-` : row.renter_name}
-										{!row.completed && row.renter_phone !== "" && (
-											<IconButton onClick={() => openWhatsApp(row.renter_phone)}>
-												<WhatsAppIcon /> 
-											</IconButton>
-										)}
-										</TableCell>
-									</TableRow>
-									<TableRow key="2">
-										<TableCell component="th" scope="row">
-										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
-										{row.completed ? 
-											`-` : 
-											`${new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(calculateUsageDurationAndCost(row, row).totalCost)}`
-											}
-										</TableCell>
-									</TableRow>
+									{!row.completed && row.renter_phone !== "" && (
+										<React.Fragment><TableRow key="2">
+												<TableCell component="th" scope="row">
+													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemakai</Typography>
+													{row.renter_name}
+													<IconButton onClick={() => openWhatsApp(row.renter_phone)}>
+														<WhatsAppIcon />
+													</IconButton>
+												</TableCell>
+											</TableRow><TableRow key="3">
+													<TableCell component="th" scope="row">
+														<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
+														{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(calculateUsageDurationAndCost(row, row).totalCost)}
+													</TableCell>
+												</TableRow>
+											</React.Fragment>
+									)}
                 </TableBody>
               </Table>
 							</Box>
