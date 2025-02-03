@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { Actions, Car, CarTransaction, RentType, Transaction } from "../../types/interfaceModels";
-import { Box, Chip, Collapse, Grid2 as Grid, IconButton, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Box, Button, Chip, Collapse, Grid2 as Grid, IconButton, Paper, Snackbar, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import CarRentalModal from "./carRentalModal";
 import { getAllCarsWithLatestTransaction, updateCar } from "../../services/carService";
 import { addTransaction, getLatestTransactionByVinAndCompletedStatus, updateTransaction } from "../../services/transactionService";
@@ -179,7 +179,7 @@ const CarList: React.FC = () => {
 					<Chip size="small"
 										color={row.ready ? "success"  : "error" }
 										label={row.ready ? "Ready" : "Keluar"}
-										onClick={() => openCarModal(row, row.ready)}
+										// onClick={() => openCarModal(row, row.ready)}
 									/>
 					</TableCell>
 				</TableRow>
@@ -209,7 +209,8 @@ const CarList: React.FC = () => {
 										</TableCell>
 									</TableRow>
 									{!row.completed && row.renter_phone !== "" && (
-										<React.Fragment><TableRow key="2">
+										<React.Fragment>
+											<TableRow key="2">
 												<TableCell component="th" scope="row">
 													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemakai</Typography>
 													{row.renter_name}
@@ -217,14 +218,24 @@ const CarList: React.FC = () => {
 														<WhatsAppIcon />
 													</IconButton>
 												</TableCell>
-											</TableRow><TableRow key="3">
+											</TableRow>
+											<TableRow key="3">
 													<TableCell component="th" scope="row">
 														<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
 														{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(calculateUsageDurationAndCost(row, row).totalCost)}
 													</TableCell>
-												</TableRow>
-											</React.Fragment>
+											</TableRow>
+										</React.Fragment>
 									)}
+									<TableRow key="3">
+										<TableCell component="th" scope="row">
+											<Button variant="contained" size="small" onClick={() => openCarModal(row, row.ready)}
+												color={row.ready ? "success"  : "error" }
+												>
+												{row.ready ? "Keluarkan" : "Masukkan"} {row.name} - {row.vin}
+											</Button>
+										</TableCell>
+									</TableRow>
                 </TableBody>
               </Table>
 							</Box>
