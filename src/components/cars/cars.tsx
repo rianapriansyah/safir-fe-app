@@ -56,6 +56,7 @@ const CarList: React.FC = () => {
 	const [openSnack, setOpenSnack] = React.useState(false);
 	const handleCloseSnack = () => setOpenSnack(false);
 	const [action, setAction] = useState<Actions>(Actions.Out);
+	
 
 	useEffect(() => {
 		handleFetchCars();
@@ -190,40 +191,43 @@ const CarList: React.FC = () => {
 									Info Pemakaian
 								</Typography>
 								<Table size="small" aria-label="purchases">
-                <TableHead>
+                {/* <TableHead>
                   <TableRow>
                     <TableCell>Tanggal Pengambilan</TableCell>
                     <TableCell>Pemakai</TableCell>
                     <TableCell align="right">Tarif Perhari</TableCell>
                     <TableCell align="right">Tagihan Berjalan</TableCell>
                   </TableRow>
-                </TableHead>
+                </TableHead> */}
                 <TableBody>
 									<TableRow key="1">
-										<TableCell component="th" scope="row">
+										<TableCell scope="row">
 										{row.completed ? 
 										`Pemakaian terakhir, ${format(new Date(row.in), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}` : 
 										`${format(new Date(row.out), "EEEE, dd MMMM yyyy, HH:mm", { locale: id })}`
 										}
 										</TableCell>
-										<TableCell>{row.completed ? `-` : row.renter_name}
-
+									</TableRow>
+									<TableRow key="2">
+										<TableCell>
+										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemakai</Typography>
+										{row.completed ? `-` : row.renter_name}
 										{!row.completed && row.renter_phone !== "" && (
 											<IconButton onClick={() => openWhatsApp(row.renter_phone)}>
 												<WhatsAppIcon /> 
 											</IconButton>
 										)}
 										</TableCell>
-										<TableCell align="right">
-										{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(row.dailyRate)}
-										</TableCell>
-										<TableCell align="right">
-											{row.completed ? 
+									</TableRow>
+									<TableRow key="2">
+										<TableCell component="th" scope="row">
+										<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
+										{row.completed ? 
 											`-` : 
 											`${new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(calculateUsageDurationAndCost(row, row).totalCost)}`
 											}
 										</TableCell>
-                    </TableRow>
+									</TableRow>
                 </TableBody>
               </Table>
 							</Box>
