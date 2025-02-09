@@ -1,7 +1,6 @@
 ﻿import { Car, Transaction } from "../types/interfaceModels";
 
 export function calculateUsageDurationAndCost(car:Car, transaction:Transaction): { totalCost: number } {
-  debugger;
 	const outDate = new Date(transaction.out);
   const inDate = new Date();
   const dailyRate = car.dailyRate;
@@ -11,7 +10,7 @@ export function calculateUsageDurationAndCost(car:Car, transaction:Transaction):
   const totalHours = Math.ceil(diffInMs / (1000 * 60 * 60)); // Total hours, rounded up
   let totalCost = 0;
 
-  if (transaction.rentType === "Daily" && totalHours <= 4) {
+  if (transaction.rent_type === "Daily" && totalHours <= 4) {
     // Rule 6: If rent type is daily and duration is < 4 hours, count as daily
     totalCost = dailyRate;
   } else if (totalHours <= 4) {

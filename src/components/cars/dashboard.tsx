@@ -1,6 +1,6 @@
-import { Card, CardActions, CardContent, Grid2 as Grid, List, ListItem, ListItemText, Stack, styled, Typography  } from '@mui/material';
+import { Card, CardActions, CardContent, FormControl, Grid2 as Grid, InputLabel, List, ListItem, ListItemText, MenuItem, Select, SelectChangeEvent, Stack, styled, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { getCarsWithIncomeByType, getSumActualIncomeByCarType } from '../../services/dashboardService';
+import { get_expense_by_filter, getCarsWithIncomeByType, getSumActualIncomeByCarType } from '../../services/dashboardService';
 import MuiAccordion, { AccordionProps } from '@mui/material/Accordion';
 import MuiAccordionSummary, {
   AccordionSummaryProps,
@@ -8,7 +8,7 @@ import MuiAccordionSummary, {
 } from '@mui/material/AccordionSummary';
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import ArrowForwardIosSharpIcon from '@mui/icons-material/ArrowForwardIosSharp';
-import { getSumOfExpenseByRental } from '../../services/expenseService';
+import { StaticFilter } from '../../types/interfaceModels';
 
 
 const Dashboard: React.FC = () => {
@@ -19,6 +19,7 @@ const Dashboard: React.FC = () => {
 	const [internalCars, setInternalCars] = useState<any[]>([]);
 	const [externalCars, setExternalCars] = useState<any[]>([]);
 	const [expense, setExpense] = useState<any>(0);
+	const [selectedFilter, setSelectedFilter] = useState<string>('this_month');
 
 	useEffect(() => {
 		fetchIntCarIncome();
@@ -26,7 +27,7 @@ const Dashboard: React.FC = () => {
 		fetchInternalCars();
 		fetchExternalCars();
 		fetchTotalExpenses();
-	}, []);
+	}, [selectedFilter]);
 
 	const fetchIntCarIncome = async () => {
 		let isFetching = false;
@@ -68,7 +69,7 @@ const Dashboard: React.FC = () => {
 		let isFetching = false;
 		if (isFetching) return; // Prevent fetch if already in progress
 		isFetching = true;
-		const data = await getSumOfExpenseByRental();
+		const data = await get_expense_by_filter(selectedFilter);
 		console.log(data);
 		setExpense(data);
 		isFetching = false;
@@ -133,11 +134,30 @@ const Dashboard: React.FC = () => {
 		textAlign: "left"
 	}));
 
+	const handleFilterChange = async (e: SelectChangeEvent<string>) => {
+    setSelectedFilter(e.target.value as string);
+  };
 	
 
 return (
-   <Grid >
-		 <Stack direction={'row'} spacing={2}>
+   <Grid>
+		 <Stack spacing={2}>
+		 <FormControl variant="outlined" style={{ marginBottom: '16px' }}>
+        <InputLabel id="car-select-label">Pilih Filter</InputLabel>
+        <Select
+          labelId="car-select-label"
+          id="car-select"
+          value={selectedFilter}
+          onChange={handleFilterChange}
+          label="Terapkan Filter"
+        >
+          {StaticFilter.map((filter) => (
+            <MenuItem key={filter.id} value={filter.key}>
+              {filter.value}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
 			<Card sx={{
 				height: '100%'}}>
 				<CardContent>
@@ -148,7 +168,7 @@ return (
 					<span>
 					<Typography sx={{ color: 'text.secondary', mb: 1.5 }}>IDR
 					</Typography>
-					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(intCarIncome.total_income)}</Typography>
+					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(expense.total_internal_car_income)}</Typography>
 					</span>		
 					
 				</CardContent>
@@ -179,7 +199,7 @@ return (
 					<span>
 					<Typography sx={{ color: 'text.secondary', mb: 1.5 }}>IDR
 					</Typography>
-					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(intCarIncome.total_income - expense.total_expense)}</Typography>
+					<Typography variant="h3" component="div">{new Intl.NumberFormat('id-ID').format(expense.total_internal_car_income - expense.total_expense)}</Typography>
 					</span>		
 				</CardContent>
 				<CardActions>

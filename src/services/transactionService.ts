@@ -14,7 +14,7 @@ export async function addTransaction(transaction: Transaction) {
 			car_name:transaction.name,
 			renter_name:transaction.renterName,
 			renter_phone:transaction.renterPhone,
-			rent_type:transaction.rentType,
+			rent_type:transaction.rent_type,
 			out:transaction.out,
 			fuel_out:transaction.fuelOut,
 			fuel_in:transaction.fuelIn,
@@ -81,7 +81,7 @@ function mapToTransaction(rawData: RawTransactionData): Transaction {
     renterPhone: rawData.renter_phone || '',
     out: new Date(rawData.out), // Convert to Date object
     in: rawData.in ? new Date(rawData.in) : new Date(), // Handle null for unfinished transactions
-    rentType: rawData.rent_type || '',
+    rent_type: rawData.rent_type || '',
     fuelOut: rawData.fuel_out || '',
     fuelIn: rawData.fuel_in || '',
     dp: rawData.dp || 0,

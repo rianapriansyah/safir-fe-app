@@ -204,6 +204,7 @@ return (
         </DialogContent>
         <DialogActions>
 				<Button onClick={onCloseModal}>Batal</Button>
+				{/* <Button onClick={()=>handleAction()}>Pembayaran Saja</Button> */}
 				<Button onClick={()=>handleAction()}>{`${action.toString()}`}</Button>
         </DialogActions>
     </Dialog>

@@ -28,13 +28,13 @@ export interface Transaction {
 	renterPhone:string
   out:Date;
 	in:Date;
-	rentType:string;
 	fuelOut:string;
 	fuelIn:string;
 	dp:number;
 	actualPayment:number;
 	desc:string;
 	completed:boolean;
+	rent_type:string;
 }
 
 export interface CarTransaction {
@@ -126,3 +126,22 @@ export function formatSavedTransactionOut(transactionOut: string | Date): string
 
 	return `${formattedHour} ${period}`;
 }
+
+
+export const StaticFilter=[
+  {
+    id:"1",
+    key:"this_month",
+    value:"Bulan Ini"
+  },
+  {
+    id:"2",
+    key:"last_month",
+    value:"Bulan Lalu"
+  },
+  {
+    id:"3",
+    key:"this_year",
+    value:"Tahun Ini"
+  }
+];

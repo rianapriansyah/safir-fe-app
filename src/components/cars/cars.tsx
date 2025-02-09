@@ -32,7 +32,7 @@ const emptyTransaction:Transaction={
 	renterPhone:"",
 	out:new Date(),
 	in:new Date(),
-	rentType: Object.keys(RentType)[Object.values(RentType).indexOf(RentType.Daily)],
+	rent_type: Object.keys(RentType)[Object.values(RentType).indexOf(RentType.Daily)],
 	fuelOut:"",
 	fuelIn:"",
 	dp:0,
@@ -141,15 +141,15 @@ const CarList: React.FC = () => {
     setOpenSnack(true);
   };
 
-	const formatWhatsAppLink = (number: string) => {
+	const formatWhatsAppLink = (number: string, qr_link:string) => {
 		const cleanedNumber = number.replace(/[^0-9]/g, "");
 		if (cleanedNumber.startsWith("0")) {
-			return `https://wa.me/62${cleanedNumber.slice(1)}`;
+			return `https://wa.me/62${cleanedNumber.slice(1)}?text=${qr_link}`;
 		}
 	};
 
-	const openWhatsApp = (number: string) => {
-    const waLink = formatWhatsAppLink(number);
+	const openWhatsApp = (number: string, qr_link:string) => {
+    const waLink = formatWhatsAppLink(number, qr_link);
     window.open(waLink, "_blank");
   };
 
@@ -176,11 +176,7 @@ const CarList: React.FC = () => {
 						</IconButton>
 					</TableCell>
 					<TableCell align="right">
-					<Chip size="small"
-										color={row.ready ? "success"  : "error" }
-										label={row.ready ? "Ready" : "Keluar"}
-										// onClick={() => openCarModal(row, row.ready)}
-									/>
+					<Chip size="small" color={row.ready ? "success"  : "error" } label={row.ready ? "Ready" : "Keluar"}/>
 					</TableCell>
 				</TableRow>
 				<TableRow>
@@ -214,20 +210,26 @@ const CarList: React.FC = () => {
 												<TableCell component="th" scope="row">
 													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemakai</Typography>
 													{row.renter_name}
-													<IconButton onClick={() => openWhatsApp(row.renter_phone)}>
+													<IconButton onClick={() => openWhatsApp(row.renter_phone, row.qr_link)}>
 														<WhatsAppIcon />
 													</IconButton>
 												</TableCell>
 											</TableRow>
-											<TableRow key="3">
-													<TableCell component="th" scope="row">
-														<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
-														{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(calculateUsageDurationAndCost(row, row).totalCost)}
-													</TableCell>
+											<TableRow key="4">
+												<TableCell component="th" scope="row">
+													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>DP</Typography>
+													{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(row.dp)}
+												</TableCell>
+											</TableRow>
+											<TableRow key="5">
+												<TableCell component="th" scope="row">
+													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Tagihan</Typography>
+													{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(calculateUsageDurationAndCost(row, row).totalCost)}
+												</TableCell>
 											</TableRow>
 										</React.Fragment>
 									)}
-									<TableRow key="3">
+									<TableRow key="6">
 										<TableCell component="th" scope="row">
 											<Button variant="contained" size="small" onClick={() => openCarModal(row, row.ready)}
 												color={row.ready ? "success"  : "error" }
@@ -261,7 +263,7 @@ const CarList: React.FC = () => {
 						</Typography>
 					</Stack>
 					<TableContainer component={Paper}>
-						<Table aria-label="collapsible table">
+						<Table aria-label="collapsible table" size="small">
 							<TableHead>
 								<TableRow>
 									<TableCell width={'1%'}/>
