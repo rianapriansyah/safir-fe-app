@@ -231,8 +231,7 @@ const CarList: React.FC = () => {
 									)}
 									<TableRow key="6">
 										<TableCell component="th" scope="row">
-											<Button variant="contained" size="small" onClick={() => openCarModal(row, row.ready)}
-												color={row.ready ? "success"  : "error" }
+											<Button variant="contained" size="small" onClick={() => openCarModal(row, row.ready)} color={row.ready ? "success"  : "error" }
 												>
 												{row.ready ? "Keluarkan" : "Masukkan"} {row.name} - {row.vin}
 											</Button>

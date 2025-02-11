@@ -19,8 +19,16 @@ export async function getSumActualIncomeByCarType(owned: boolean) {
 	return data;
 }
 
-export async function get_expense_by_filter(filter:string) {
-  const { data, error } = await supabase.rpc('get_expense_by_filter', {filter:filter });
+export async function get_amount_by_filter(filter:string) {
+  const { data, error } = await supabase.rpc('get_amount_by_filter', {filter:filter });
+  if (error) throw new Error(error.message);
+  
+  return data;
+}
+
+export async function get_amount_per_car_by_filter(filter:string) {
+  const { data, error } = await supabase.rpc('get_amount_per_car_by_filter', {filter:filter });
+	console.log(data);
   if (error) throw new Error(error.message);
   
   return data;

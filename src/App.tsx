@@ -6,7 +6,7 @@ import CarList from './components/cars/cars';
 import AppTheme from './theme/AppTheme';
 import MenuIcon from '@mui/icons-material/Menu';
 import ListTransactions from './components/cars/listTransactions';
-import Dashboard from './components/cars/dashboard';
+import Dashboard from './components/dashboard/dashboard';
 import Expenses from './components/expenses/expenses';
 
 interface ListItemLinkProps {

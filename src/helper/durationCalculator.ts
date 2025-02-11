@@ -27,7 +27,7 @@ export function calculateUsageDurationAndCost(car:Car, transaction:Transaction):
     if (excessHours <= 1) {
       // Ignore excess up to 1 hour (no extra charge)
       totalCost = fullDays * dailyRate;
-    } else if (excessHours <= 4) {
+    } else if (excessHours <= 12) {
       // Excess between 2 to 4 hours (late charge applied)
       totalCost = fullDays * dailyRate + excessHours * lateChargeRate;
     } else {

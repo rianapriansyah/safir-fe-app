@@ -48,10 +48,12 @@ export async function getAllTransactionsByVin(vin: string) {
 	return (data || []).map(mapToTransaction);
 }
 
-export async function getCountAllPaymentMadeByCar(vin: string) {
-	const { data, error } = await supabase.from('payment_summary_by_vin').select('*').eq('vin', vin).single();
-	if (error) throw new Error(error.message);
-	return data;
+export async function get_amount_by_filter(vin:string) {
+  const { data, error } = await supabase.rpc('get_amount_by_vin', {filter:vin });
+	console.log(data);
+  if (error) throw new Error(error.message);
+  
+  return data;
 }
 
 export async function getLatestTransactionByVinAndCompletedStatus(vin: string, completed:string) {

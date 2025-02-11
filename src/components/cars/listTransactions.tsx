@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { Transaction } from '../../types/interfaceModels';
 import { getAllCars } from '../../services/carService';
-import { getAllTransactionsByVin, getCountAllPaymentMadeByCar } from '../../services/transactionService';
+import { get_amount_by_filter, getAllTransactionsByVin } from '../../services/transactionService';
 
 export interface Car {
   vin: string;
@@ -52,7 +52,7 @@ const ListTransactions: React.FC = () => {
         try {
           const transactionData = await getAllTransactionsByVin(selectedVin);
           setTransactions(transactionData);
-          const paymentSummaryData = await getCountAllPaymentMadeByCar(selectedVin);
+          const paymentSummaryData = await get_amount_by_filter(selectedVin);
           setPaymentSummary(paymentSummaryData)
         } catch (error) {
           console.error('Error fetching transactions:', error);
@@ -105,10 +105,10 @@ const ListTransactions: React.FC = () => {
         </Select>
       </FormControl>
       <Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-        Transaksi aktual tercatat {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format((paymentSummary?.adjusted_total_actual_payment))}
+        Transaksi aktual tercatat {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format((paymentSummary?.total_income))}
       </Typography>
       <Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
-        Fee Transaksi {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(paymentSummary?.transaction_fee)}
+        Fee Transaksi {new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(paymentSummary?.profit_sharing_amount)}
       </Typography>
 			<Offset />
       
