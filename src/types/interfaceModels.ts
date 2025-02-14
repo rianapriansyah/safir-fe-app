@@ -1,11 +1,19 @@
 export interface Expense {
 	id: number;
 	vin:string;
-	description:boolean;
+	description:string;
   category:string;
+	category_id:number;
 	amount:number;
 	created_at:Date;
-	car_specific:boolean;
+	company_expense:boolean;
+}
+
+export interface ExpenseCategory {
+	id: number;
+	code:string;
+	name:string;
+  description:string;
 }
 
 export interface Car {
@@ -64,8 +72,6 @@ export interface VCarTransaction {
 	desc:string;
 	completed:boolean;
 }
-
-
 
 export enum Actions{
   Out = "Keluarkan Mobil",

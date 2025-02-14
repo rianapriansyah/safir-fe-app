@@ -9,27 +9,33 @@ import {
   TableContainer,
   TableHead,
   Paper,
-	styled,
 	SelectChangeEvent,
-	tableCellClasses,
-	TableCell,
-	TableRow,
 	Typography,
+  Button,
+  Stack,
 } from '@mui/material';
-import { Expense } from '../../types/interfaceModels';
+import { Car, Expense } from '../../types/interfaceModels';
 import { getAllCars } from '../../services/carService';
-import { getAllExpensesByVin } from '../../services/expenseService';
+import { getAllExpensesByVin, insert_expense } from '../../services/expenseService';
+import { StyledTableCell, StyledTableRow } from '../common/table';
+import ExpenseModal from './newExpenseModal';
 
-export interface Car {
-  vin: string;
-  name: string;
-}
+const emptyExpense:Expense={
+  id: 0,
+  vin: "",
+  description: "",
+  category: '',
+  amount: 0,
+  created_at: new Date,
+  company_expense: false,
+  category_id:27
+};
 
 const Expenses: React.FC = () => {
-	const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
   const [cars, setCars] = useState<Car[]>([]);
   const [selectedVin, setSelectedVin] = useState<string>('');
   const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [isModalOpen, setModalState] = useState(false); // Modal state
 
   // Fetch car list on mount
   useEffect(() => {
@@ -63,28 +69,53 @@ const Expenses: React.FC = () => {
     setSelectedVin(e.target.value as string);
   };
 
-	const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
+	const openModal = () => {
+		// setAction(action);
+		// setSelectedProduct(product);
+    setModalState(true);
+  };
 
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
+  const closeModal = () => {
+		// setAction(action);
+		// setSelectedProduct(product);
+    setModalState(false);
+  };
+
+  const handleSave = async (expense: Expense) => {
+		try {
+      console.log('expense main page:', expense);
+      await insert_expense(expense);
+      alert("Berhasil");
+      fetchExpenses(); // Refresh the Category list
+      setModalState(false); // Close the modal
+		} catch (error) {
+      console.error('Kesalahan dalam menyimpan: ', error);
+		}
+	};
+
+  // const handleDelete = async (expense: Expense) => {
+	// 	try {
+  //     console.log('expense main page:', expense);
+	// 		 let message = "";
+	// 			// if (expense.id === 0) {
+	// 			// 		// New Category
+	// 			// 		await insertCategory(category);
+	// 			// 		message = "Dibuat!";
+	// 			// } else {
+	// 			// 		// Update Existing Category
+	// 			// 		await updateCategory(category.id, category);
+	// 			// 		message = "Diubah!";
+	// 			// }
+
+	// 			fetchExpenses(); // Refresh the Category list
+	// 			setModalState(false); // Close the modal
+	// 	} catch (error) {
+	// 			console.error('Kesalahan dalam menyimpan: ', error);
+	// 	}
+	// };
 
   return (
-    <React.Fragment>
+    <Stack spacing={2}>
       <FormControl fullWidth variant="outlined" style={{ marginBottom: '16px' }}>
         <InputLabel id="car-select-label">Pilih Mobil</InputLabel>
         <Select
@@ -101,13 +132,12 @@ const Expenses: React.FC = () => {
           ))}
         </Select>
       </FormControl>
-			<Offset />
+      <Button onClick={()=>{openModal();}}  variant="contained">Catat Pengeluaran</Button>
       
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
             <StyledTableRow>
-							<StyledTableCell>Id</StyledTableCell>
               <StyledTableCell>Tanggal</StyledTableCell>
               <StyledTableCell>Keterangan</StyledTableCell>
               <StyledTableCell>Kategori</StyledTableCell>
@@ -118,8 +148,6 @@ const Expenses: React.FC = () => {
           <TableBody>
             {expenses.map((expense) => (
               <StyledTableRow key={expense.id}>
-								<StyledTableCell>{expense.id} 
-								</StyledTableCell>
                 <StyledTableCell>
 									{new Intl.DateTimeFormat('id-ID', {dateStyle: 'full',timeZone: 'Asia/Makassar',}).format(new Date(expense.created_at))}
 									<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>
@@ -132,13 +160,20 @@ const Expenses: React.FC = () => {
                 <StyledTableCell>
 									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(expense.amount)}
 								</StyledTableCell>
-                <StyledTableCell>{expense.car_specific? "Mobil" : "Rental"}</StyledTableCell>
+                <StyledTableCell>{expense.company_expense? "Rental" : expense.vin }</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-    </React.Fragment>
+      <ExpenseModal
+				expense={emptyExpense}
+        cars={cars}
+				isModalOpen={isModalOpen} 
+				onCloseModal={() => closeModal()}	
+				onSaveExpense={handleSave} // Callback for saving
+			/>
+    </Stack>
   );
 };
 

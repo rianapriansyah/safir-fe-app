@@ -11,14 +11,12 @@ import {
   Paper,
 	styled,
 	SelectChangeEvent,
-	tableCellClasses,
-	TableCell,
-	TableRow,
 	Typography,
 } from '@mui/material';
 import { Transaction } from '../../types/interfaceModels';
 import { getAllCars } from '../../services/carService';
 import { get_amount_by_filter, getAllTransactionsByVin } from '../../services/transactionService';
+import { StyledTableRow, StyledTableCell } from '../common/table';
 
 export interface Car {
   vin: string;
@@ -65,26 +63,6 @@ const ListTransactions: React.FC = () => {
   const handleCarChange = async (e: SelectChangeEvent<string>) => {
     setSelectedVin(e.target.value as string);
   };
-
-	const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-    // hide last border
-    '&:last-child td, &:last-child th': {
-      border: 0,
-    },
-  }));
-
-  const StyledTableCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.black,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
 
   return (
     <React.Fragment>
