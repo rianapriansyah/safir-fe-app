@@ -35,7 +35,7 @@ export default function Row(props: { row: any }) {
 								<TableRow>
 									<TableCell>Mobil</TableCell>
 									{/* <TableCell>Jumlah Hari Keluar</TableCell> */}
-									<TableCell align="right">Pemasukan Kotor</TableCell>
+									<TableCell align="right">Saldo Rekening</TableCell>
 									<TableCell align="right">Fee Rental</TableCell>
 									<TableCell align="right">Pengeluaran</TableCell>
 									<TableCell align="right">Pemasukan Bersih</TableCell>

@@ -12,6 +12,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { calculateUsageDurationAndCost } from "../../helper/durationCalculator";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import QrCodeIcon from '@mui/icons-material/QrCode';
+import { insert_balance, mapTransactionToBalance } from "../../services/carBalanceService";
 
 const emptyCar:any={
 	id: 0,
@@ -26,19 +27,21 @@ const emptyCar:any={
 
 const emptyTransaction:Transaction={
 	id: 0,
-	vin:"",
-	name:"",
-	renterName:"",
-	renterPhone:"",
-	out:new Date(),
-	in:new Date(),
+	vin: "",
+	name: "",
+	renterName: "",
+	renterPhone: "",
+	out: new Date(),
+	in: new Date(),
 	rent_type: Object.keys(RentType)[Object.values(RentType).indexOf(RentType.Daily)],
-	fuelOut:"",
-	fuelIn:"",
-	dp:0,
-	actualPayment:0,
-	desc:"",
-	completed:false
+	fuelOut: "",
+	fuelIn: "",
+	dp: 0,
+	actualPayment: 0,
+	desc: "",
+	completed: false,
+	paid: false,
+	current_balance: 0
 }
 
 const emptyCarTransaction: CarTransaction = {
@@ -87,6 +90,11 @@ const CarList: React.FC = () => {
 				//update transaction
 				carTransaction.transaction.completed = true;
 				await updateTransaction(carTransaction.transaction.id,carTransaction.transaction);
+
+				if(carTransaction.transaction.actualPayment!==0||carTransaction.transaction.dp!==0){
+					const balance = mapTransactionToBalance(carTransaction.transaction);
+					await insert_balance(balance);
+				}				
 			}
 
 			message = "Diubah!";

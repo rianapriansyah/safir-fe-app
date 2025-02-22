@@ -8,6 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ListTransactions from './components/cars/listTransactions';
 import Dashboard from './components/dashboard/dashboard';
 import Expenses from './components/expenses/expenses';
+import CarDetails from './components/cars/carDetails';
 
 interface ListItemLinkProps {
   icon?: React.ReactElement<unknown>;
@@ -44,6 +45,14 @@ const menus  = [
     title: 'Expenses',
     element: <Expenses />,
     path: '/expenses',
+    // icon: <PointOfSaleIcon />,
+    // permission: PERMISSIONS.TRANSACTIONS,
+    // roles: ['admin', 'cashier'], // Allowed roles
+  },
+  {
+    title: 'Car Details',
+    element: <CarDetails />,
+    path: '/car-details',
     // icon: <PointOfSaleIcon />,
     // permission: PERMISSIONS.TRANSACTIONS,
     // roles: ['admin', 'cashier'], // Allowed roles
@@ -106,6 +115,7 @@ const App: React.FC = () => {
           <Route path="/transactions" element={<ListTransactions />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expenses" element={<Expenses />} />
+          <Route path="/car-details" element={<CarDetails />} />
         </Routes>
       </Router>
     </AppTheme>

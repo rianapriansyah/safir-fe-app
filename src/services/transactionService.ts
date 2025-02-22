@@ -21,7 +21,8 @@ export async function addTransaction(transaction: Transaction) {
 			dp:transaction.dp,
 			actual_payment:transaction.actualPayment,
 			desc:transaction.desc,
-			completed:transaction.completed
+			completed:transaction.completed,
+			paid:transaction.paid
 		},
 	]);
 	if (error) throw new Error(error.message);
@@ -34,7 +35,8 @@ export async function updateTransaction(id: number, transaction: Partial<Omit<Tr
 		fuel_in:transaction.fuelIn,
 		dp:transaction.dp,
 		actual_payment:transaction.actualPayment,
-		completed:transaction.completed
+		completed:transaction.completed,
+		paid:transaction.paid
 	}).eq('id', id);
 	if (error) throw new Error(error.message);
 	return data;
@@ -89,6 +91,8 @@ function mapToTransaction(rawData: RawTransactionData): Transaction {
     dp: rawData.dp || 0,
     actualPayment: rawData.actual_payment || 0,
     desc: rawData.desc || '',
-		completed:rawData.completed||false
+		completed:rawData.completed||false,
+		paid:rawData.paid,
+		current_balance:rawData.current_balance
   };
 }

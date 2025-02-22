@@ -16,13 +16,15 @@ import {
 } from '@mui/material';
 import { Car, Expense } from '../../types/interfaceModels';
 import { getAllCars } from '../../services/carService';
-import { getAllExpensesByVin, insert_expense } from '../../services/expenseService';
+import { getAllExpenses, insert_expense } from '../../services/expenseService';
 import { StyledTableCell, StyledTableRow } from '../common/table';
 import ExpenseModal from './newExpenseModal';
+import { insert_balance, mapExpenseToBalance } from '../../services/carBalanceService';
 
 const emptyExpense:Expense={
   id: 0,
   vin: "",
+  name:"",
   description: "",
   category: '',
   amount: 0,
@@ -60,7 +62,7 @@ const Expenses: React.FC = () => {
     let isFetching = false;
 		if (isFetching) return; // Prevent fetch if already in progress
 		isFetching = true;
-		const expenseData = await getAllExpensesByVin();
+		const expenseData = await getAllExpenses();
     setExpenses(expenseData);
 		isFetching = false;
 	};
@@ -84,7 +86,14 @@ const Expenses: React.FC = () => {
   const handleSave = async (expense: Expense) => {
 		try {
       console.log('expense main page:', expense);
+      
       await insert_expense(expense);
+
+      if(!expense.company_expense){
+        const balance = mapExpenseToBalance(expense);
+        await insert_balance(balance);
+      }
+      
       alert("Berhasil");
       fetchExpenses(); // Refresh the Category list
       setModalState(false); // Close the modal
@@ -160,7 +169,7 @@ const Expenses: React.FC = () => {
                 <StyledTableCell>
 									{new Intl.NumberFormat('id-ID', {style:'currency', currency:'IDR'}).format(expense.amount)}
 								</StyledTableCell>
-                <StyledTableCell>{expense.company_expense? "Rental" : expense.vin }</StyledTableCell>
+                <StyledTableCell>{expense.company_expense? "Rental" : `${expense.vin} - ${expense.name}`  }</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

@@ -1,6 +1,17 @@
+export interface CarBalance {
+	id: number;
+	vin:string;
+	amount:number;
+  transaction_type:string;
+	description:string;
+	reference_id:string;
+	name:string;
+}
+
 export interface Expense {
 	id: number;
 	vin:string;
+	name:string;
 	description:string;
   category:string;
 	category_id:number;
@@ -43,6 +54,8 @@ export interface Transaction {
 	desc:string;
 	completed:boolean;
 	rent_type:string;
+	paid:boolean;
+	current_balance:number;
 }
 
 export interface CarTransaction {
@@ -78,6 +91,12 @@ export enum Actions{
   In = "Masukkan Mobil"
 }
 
+export enum TransType{
+  deposit = "Deposit",
+  expense = "Pengeluaran",
+	withdrawal = "Penarikan"
+}
+
 export enum RentType{
   ThreeHour = <any>"Tiga Jam",
   Daily = <any>"Harian",
@@ -99,6 +118,8 @@ export interface RawTransactionData {
   actual_payment?: number;
   desc?: string;
 	completed:boolean;
+	paid:boolean;
+	current_balance:number;
 }
 
 export function generate12HourTimes(): { time: string }[] {

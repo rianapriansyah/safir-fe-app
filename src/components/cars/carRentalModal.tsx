@@ -34,8 +34,17 @@ const CarRentalModal: React.FC<carModalProps> = ({
 	}, [carTransaction]);
 
 	const handleAction = async () => {
-		setLocalCarTransaction(localCarTransaction);
-		onUpdateCarTransaction(localCarTransaction); // Call the save function passed from the parent
+		const updatedTransaction = { ...localCarTransaction };
+
+		if(localCarTransaction.transaction.dp===0 && localCarTransaction.transaction.actualPayment===0&&action===Actions.In){
+			updatedTransaction.transaction.paid = false;
+		}
+		else if(action===Actions.In){
+			updatedTransaction.transaction.paid = true;
+		}
+		
+		setLocalCarTransaction(updatedTransaction);
+		onUpdateCarTransaction(updatedTransaction); // Call the save function passed from the parent
 	};
 
 	const handleChangeTime = async (e: SelectChangeEvent<string>) => {
