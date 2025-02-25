@@ -91,10 +91,8 @@ const CarList: React.FC = () => {
 				carTransaction.transaction.completed = true;
 				await updateTransaction(carTransaction.transaction.id,carTransaction.transaction);
 
-				if(carTransaction.transaction.actualPayment!==0||carTransaction.transaction.dp!==0){
-					const balance = mapTransactionToBalance(carTransaction.transaction);
-					await insert_balance(balance);
-				}				
+				const balance = mapTransactionToBalance(carTransaction.transaction);
+				await insert_balance(balance);	
 			}
 
 			message = "Diubah!";
