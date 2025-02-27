@@ -81,22 +81,28 @@ const CarList: React.FC = () => {
 	 	//console.log(carTransaction);
 		try {
 			let message = "";
+			let balance:any;
 			await updateCar(carTransaction.car.vin, carTransaction.car.ready);
 			if(carTransaction.transaction.id===0){
 				//create new transaction
 				 await addTransaction(carTransaction.transaction);
 
-				 const balance = mapTransactionToBalance(carTransaction.transaction, false);
-				await insert_balance(balance);	
+				 if(carTransaction.transaction.dp!==0){
+					balance = mapTransactionToBalance(carTransaction.transaction, false);
+					
+				 }
 			}
 			else{
 				//update transaction
 				carTransaction.transaction.completed = true;
 				await updateTransaction(carTransaction.transaction.id,carTransaction.transaction);
 
-				const balance = mapTransactionToBalance(carTransaction.transaction, true);
-				await insert_balance(balance);	
+				if(carTransaction.transaction.actualPayment!==0){
+					balance = mapTransactionToBalance(carTransaction.transaction, true);
+				 }
 			}
+
+			await insert_balance(balance);	
 
 			message = "Diubah!";
 			handleFetchCars(); // Refresh the product list
