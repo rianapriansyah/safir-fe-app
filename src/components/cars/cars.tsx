@@ -85,13 +85,16 @@ const CarList: React.FC = () => {
 			if(carTransaction.transaction.id===0){
 				//create new transaction
 				 await addTransaction(carTransaction.transaction);
+
+				 const balance = mapTransactionToBalance(carTransaction.transaction, false);
+				await insert_balance(balance);	
 			}
 			else{
 				//update transaction
 				carTransaction.transaction.completed = true;
 				await updateTransaction(carTransaction.transaction.id,carTransaction.transaction);
 
-				const balance = mapTransactionToBalance(carTransaction.transaction);
+				const balance = mapTransactionToBalance(carTransaction.transaction, true);
 				await insert_balance(balance);	
 			}
 

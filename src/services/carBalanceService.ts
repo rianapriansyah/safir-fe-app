@@ -15,11 +15,11 @@ export async function insert_balance(carBalance:CarBalance) {
   return data;
 }
 
-export function mapTransactionToBalance(transaction: Transaction): CarBalance {
+export function mapTransactionToBalance(transaction: Transaction, finalPayment:boolean): CarBalance {
 	return {
 		vin: transaction.vin,
 		name: transaction.name || '', // Fallback to an empty string if the field is missing
-		amount:Number(transaction.actualPayment)+Number(transaction.dp),
+		amount:finalPayment? Number(transaction.actualPayment) : Number(transaction.dp),
 		description:transaction.desc,
 		reference_id:transaction.renterName +' - '+transaction.renterPhone,
 		transaction_type:TransType.deposit,
