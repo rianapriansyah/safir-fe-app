@@ -6,6 +6,7 @@ export interface CarBalance {
 	description:string;
 	reference_id:string;
 	name:string;
+	created_at:Date;
 }
 
 export interface Expense {

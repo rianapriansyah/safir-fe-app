@@ -28,6 +28,13 @@ export async function get_amount_by_filter(filter:string) {
 
 export async function get_amount_per_car_by_filter(filter:string) {
   const { data, error } = await supabase.rpc('get_amount_per_car_by_filter', {filter:filter });
+  if (error) throw new Error(error.message);
+  
+  return data;
+}
+
+export async function get_amount_per_car_by_vin(filter:string, vin:string) {
+  const { data, error } = await supabase.rpc('get_amount_per_car_by_vin', {filter:filter, param_vin:vin });
 	console.log(data);
   if (error) throw new Error(error.message);
   

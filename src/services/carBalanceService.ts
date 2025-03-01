@@ -15,6 +15,12 @@ export async function insert_balance(carBalance:CarBalance) {
   return data;
 }
 
+export async function get_balance_by_vin(vin: string) {
+  const { data, error } = await supabase.from('car_balance').select('*').eq('vin', vin).order('created_at',{ascending:false});
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export function mapTransactionToBalance(transaction: Transaction, finalPayment:boolean): CarBalance {
 	return {
 		vin: transaction.vin,
@@ -23,7 +29,8 @@ export function mapTransactionToBalance(transaction: Transaction, finalPayment:b
 		description:transaction.desc,
 		reference_id:transaction.renterName +' - '+transaction.renterPhone,
 		transaction_type:TransType.deposit,
-		id:transaction.id
+		id:transaction.id,
+		created_at:new Date()
 	};
 }
 
@@ -35,6 +42,7 @@ export function mapExpenseToBalance(expense: Expense): CarBalance {
 		description:expense.description,
 		reference_id:expense.vin,
 		transaction_type:TransType.expense,
-		id:expense.id
+		id:expense.id,
+		created_at:new Date()
 	};
 }
