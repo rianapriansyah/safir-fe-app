@@ -89,7 +89,7 @@ const CarList: React.FC = () => {
 
 				 if(carTransaction.transaction.dp!==0){
 					balance = mapTransactionToBalance(carTransaction.transaction, false);
-					
+					await insert_balance(balance);
 				 }
 			}
 			else{
@@ -99,10 +99,9 @@ const CarList: React.FC = () => {
 
 				if(carTransaction.transaction.actualPayment!==0){
 					balance = mapTransactionToBalance(carTransaction.transaction, true);
+					await insert_balance(balance);
 				 }
 			}
-
-			await insert_balance(balance);	
 
 			message = "Diubah!";
 			handleFetchCars(); // Refresh the product list
