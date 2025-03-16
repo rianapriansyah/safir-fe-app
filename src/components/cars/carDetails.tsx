@@ -1,4 +1,4 @@
-import { FormControl, Grid2 as Grid, InputLabel,MenuItem, Paper, Select, SelectChangeEvent, Stack, Table, TableBody, TableContainer, TableHead, Typography  } from '@mui/material';
+import { Box, FormControl, Grid2 as Grid, InputLabel,MenuItem, Paper, Select, SelectChangeEvent, Stack, Tab, Table, TableBody, TableContainer, TableHead, Tabs, Typography  } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { get_amount_per_car_by_vin } from '../../services/dashboardService';
 import { Car, CarBalance, Expense, StaticFilter, Transaction } from '../../types/interfaceModels';
@@ -95,6 +95,32 @@ const CarDetails: React.FC = () => {
 		setSelectedVin(e.target.value as string);
 	};
 	
+	const [value, setValue] = React.useState(0);
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
+	interface TabPanelProps {
+		children?: React.ReactNode;
+		index: number;
+		value: number;
+	}
+
+	function CustomTabPanel(props: TabPanelProps) {
+		const { children, value, index, ...other } = props;
+
+		return (
+			<div
+				role="tabpanel"
+				hidden={value !== index}
+				id={`simple-tabpanel-${index}`}
+				aria-labelledby={`simple-tab-${index}`}
+				{...other}
+			>
+				{value === index && <Box sx={{ marginTop:3 }}>{children}</Box>}
+			</div>
+		);
+	}
 
 return (
    <Grid>
@@ -134,6 +160,22 @@ return (
       </FormControl>
 			</Stack>
 			<SummaryText owned={cars.find((x) => x.vin === selectedVin)?.owned ?? false} total_income={details.total_income} total_expense={details.total_expense} profit_sharing_amount={details.profit_sharing_amount}/>
+			<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+				<Tabs value={value} onChange={handleChange} aria-label="basic tabs example" variant="scrollable">
+					<Tab label="Detail Mobil" />
+					<Tab label="Saldo" />
+					<Tab label="Transaksi Masuk/Keluar" />
+				</Tabs>
+			</Box>
+			<CustomTabPanel value={value} index={0}>
+        
+			</CustomTabPanel>
+			<CustomTabPanel value={value} index={1}>
+				
+			</CustomTabPanel>
+			<CustomTabPanel value={value} index={2}>
+				
+			</CustomTabPanel>
 			<TableContainer component={Paper} sx={{ height: 600 }}>
         <Table stickyHeader>
           <TableHead>
