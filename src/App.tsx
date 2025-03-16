@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ListTransactions from './components/cars/listTransactions';
 import Dashboard from './components/dashboard/dashboard';
 import Expenses from './components/expenses/expenses';
-import CarDetails from './components/cars/carDetails';
+import CarDetails from './components/carDetails/details';
 
 interface ListItemLinkProps {
   icon?: React.ReactElement<unknown>;
