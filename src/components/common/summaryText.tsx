@@ -23,14 +23,14 @@ return (
 					{new Intl.NumberFormat('id-ID').format(total_income)}</Typography>
 					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Total Pengeluaran : 
 					{new Intl.NumberFormat('id-ID').format(total_expense)}</Typography>
-					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Saldo Akhir : 
-					{new Intl.NumberFormat('id-ID').format(total_income-total_expense)}
+					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Saldo : 
+					{new Intl.NumberFormat('id-ID').format(total_income+total_expense)}
 					</Typography>            
 					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Fee Rental : 
 					{new Intl.NumberFormat('id-ID').format(profit_sharing_amount)}
 					</Typography>
 					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemasukkan Bersih :
-					{new Intl.NumberFormat('id-ID').format(owned? total_income : total_income - profit_sharing_amount)}
+					{new Intl.NumberFormat('id-ID').format(owned? total_income : (total_income+total_expense) - profit_sharing_amount)}
 					</Typography>
 				</Grid>
 		</React.Fragment>
