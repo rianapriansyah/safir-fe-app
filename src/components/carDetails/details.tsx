@@ -32,8 +32,6 @@ const CarDetails: React.FC = () => {
 		isFetching = false;
 	};
 
-
-
 	const fetchCarDetailAmount = async () => {
 		let isFetching = false;
 		if (isFetching) return; // Prevent fetch if already in progress
