@@ -131,7 +131,7 @@ return (
 			<CustomTabPanel value={value} index={2}>
 				<TransactionHistory selectedVin={selectedVin}/>
 			</CustomTabPanel>
-			<CustomTabPanel value={value} index={2}>
+			<CustomTabPanel value={value} index={3}>
 				<ExpenseHistory selectedVin={selectedVin}/>
 			</CustomTabPanel>
 		 </Stack>

@@ -41,7 +41,7 @@ export function mapExpenseToBalance(expense: Expense): CarBalance {
 		amount:-Math.abs(expense.amount),
 		description:expense.description,
 		reference_id:expense.vin,
-		transaction_type:expense.category_id == 29 ? TransType.withdrawal : TransType.expense,
+		transaction_type: expense.category_id === 29 || expense.category_id === 30 ? TransType.withdrawal : TransType.expense,
 		id:expense.id,
 		created_at:new Date()
 	};

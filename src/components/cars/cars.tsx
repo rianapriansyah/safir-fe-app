@@ -218,7 +218,7 @@ const CarList: React.FC = () => {
 										}
 										</TableCell>
 									</TableRow>
-									{!row.completed && row.renter_phone !== "" && (
+									{!row.completed && (
 										<React.Fragment>
 											<TableRow key="2">
 												<TableCell component="th" scope="row">
@@ -233,6 +233,7 @@ const CarList: React.FC = () => {
 												<TableCell component="th" scope="row">
 													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>DP</Typography>
 													{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(row.dp)}
+													<Button variant="contained" size="small">Tambah Pembayaran</Button>
 												</TableCell>
 											</TableRow>
 											<TableRow key="5">
