@@ -29,7 +29,7 @@ return (
 					{new Intl.NumberFormat('id-ID').format(profit_sharing_amount)}
 					</Typography>
 					<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>Pemasukkan Bersih (Pemilik) :
-					{new Intl.NumberFormat('id-ID').format(owned? total_income : (total_income+total_expense) - profit_sharing_amount)}
+					{new Intl.NumberFormat('id-ID').format(owned? (total_income+total_expense) : (total_income+total_expense) - profit_sharing_amount)}
 					</Typography>
 				</Grid>
 		</React.Fragment>

@@ -233,7 +233,19 @@ const CarList: React.FC = () => {
 												<TableCell component="th" scope="row">
 													<Typography variant="body2" sx={{ color: 'text.primary', fontSize: 12, fontStyle: 'italic' }}>DP</Typography>
 													{new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(row.dp)}
-													<Button variant="contained" size="small">Tambah Pembayaran</Button>
+													{/* <Button variant="contained" size="small"
+													onClick={() => {	alert(row.dp+row.dp);
+														const updatedTransaction = {
+															...row,
+															dp: row.actualPayment + row.dp,
+														};
+														setCarTransaction({ car: row, transaction: updatedTransaction });
+														//setAction(Actions.AddPayment);
+														setCarModalState(true);
+													}}
+													
+													>Tambah Pembayaran
+													</Button> */}
 												</TableCell>
 											</TableRow>
 											<TableRow key="5">
