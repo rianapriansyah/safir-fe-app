@@ -9,6 +9,7 @@ import ListTransactions from './components/cars/listTransactions';
 import Dashboard from './components/dashboard/dashboard';
 import Expenses from './components/expenses/expenses';
 import CarDetails from './components/carDetails/details';
+import ManualInputForm from './components/manualInput/manualInput';
 
 interface ListItemLinkProps {
   icon?: React.ReactElement<unknown>;
@@ -21,42 +22,32 @@ const menus  = [
     title: 'Keluar Masuk',
     element: <CarList />,
     path: '/',
-    // icon: <PointOfSaleIcon />,
-    // permission: PERMISSIONS.TRANSACTIONS,
-    // roles: ['admin', 'cashier'], // Allowed roles
   },
   {
     title: 'Transaksi Mobil',
     element: <ListTransactions />,
     path: '/transactions',
-    // icon: <PointOfSaleIcon />,
-    // permission: PERMISSIONS.TRANSACTIONS,
-    // roles: ['admin', 'cashier'], // Allowed roles
   },
   {
     title: 'Dashboard',
     element: <Dashboard />,
     path: '/dashboard',
-    // icon: <PointOfSaleIcon />,
-    // permission: PERMISSIONS.TRANSACTIONS,
-    // roles: ['admin', 'cashier'], // Allowed roles
   },
   {
     title: 'Expenses',
     element: <Expenses />,
     path: '/expenses',
-    // icon: <PointOfSaleIcon />,
-    // permission: PERMISSIONS.TRANSACTIONS,
-    // roles: ['admin', 'cashier'], // Allowed roles
   },
   {
     title: 'Car Details',
     element: <CarDetails />,
     path: '/car-details',
-    // icon: <PointOfSaleIcon />,
-    // permission: PERMISSIONS.TRANSACTIONS,
-    // roles: ['admin', 'cashier'], // Allowed roles
   },
+  {
+    title: 'Manual Input',
+    element: <ManualInputForm />,
+    path: '/manual-input',
+  }
 ];
 
 const App: React.FC = () => {
@@ -116,6 +107,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/expenses" element={<Expenses />} />
           <Route path="/car-details" element={<CarDetails />} />
+          <Route path="/manual-input" element={<ManualInputForm />} />
         </Routes>
       </Router>
     </AppTheme>

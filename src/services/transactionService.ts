@@ -7,6 +7,29 @@ export async function getAllTransactions() {
 	return data;
 }
 
+export async function addManualTransaction(transaction: Transaction) {
+	const { data, error } = await supabase.from('transaction').insert([
+		{
+			vin:transaction.vin,
+			car_name:transaction.name,
+			renter_name:transaction.renterName,
+			renter_phone:transaction.renterPhone,
+			rent_type:transaction.rent_type,
+			out:transaction.out,
+			in:transaction.in,
+			fuel_out:transaction.fuelOut,
+			fuel_in:transaction.fuelIn,
+			dp:transaction.dp,
+			actual_payment:transaction.actualPayment,
+			desc:transaction.desc,
+			completed:transaction.completed,
+			paid:transaction.paid
+		},
+	]);
+	if (error) throw new Error(error.message);
+	return data;
+}
+
 export async function addTransaction(transaction: Transaction) {
 	const { data, error } = await supabase.from('transaction').insert([
 		{

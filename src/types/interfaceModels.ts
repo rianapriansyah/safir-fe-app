@@ -9,6 +9,19 @@ export interface CarBalance {
 	created_at:Date;
 }
 
+export interface ManualInputForm	{
+	id: number;
+	vin:string;
+	amount:number;
+  transaction_type:string;
+	description:string;
+	reference_id:string;
+	name:string;
+	created_at:Date;
+	out:Date;
+	in:Date;
+}
+
 export interface Expense {
 	id: number;
 	vin:string;
